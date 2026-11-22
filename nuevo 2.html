@@ -1,0 +1,331 @@
+<script>
+    const menuItems = [
+      { id: 'cls-espresso', name: 'Espresso', category: 'Cafés Clásicos', desc: 'Extracción pura del café recién molido.', image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 1.50 }] },
+      { id: 'cls-ristretto', name: 'Ristretto', category: 'Cafés Clásicos', desc: 'Espresso corto y más intenso (menos agua).', image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Corto', price: 1.50 }] },
+      { id: 'cls-lungo', name: 'Lungo', category: 'Cafés Clásicos', desc: 'Espresso largo y menos intenso (más agua).', image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Largo', price: 1.50 }] },
+      { id: 'cls-doppio', name: 'Doppio', category: 'Cafés Clásicos', desc: 'Doble espresso (ristretto, perfecto o lungo).', image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Doble', price: 1.70 }] },
+      { id: 'cls-macchiato', name: 'Café Macchiato', category: 'Cafés Clásicos', desc: 'Espresso + leche texturizada (sobre el espresso).', image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 1.80 }] },
+      { id: 'cls-cortado', name: 'Café Cortado', category: 'Cafés Clásicos', desc: 'Espresso + poca leche texturizada (vertida en el espresso).', image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 1.80 }] },
+      { id: 'cls-americano', name: 'Americano', category: 'Cafés Clásicos', desc: 'Doble Espresso + Agua caliente.', image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Doble', price: 1.80 }] },
+      { id: 'cls-cappuccino', name: 'Cappuccino', category: 'Cafés Clásicos', desc: 'Espresso + Leche texturizada (Café intenso en sabor).', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Tamaño A', price: 2.00 }, { label: 'Tamaño B', price: 2.50 }] },
+      { id: 'cls-latte', name: 'Café Latte', category: 'Cafés Clásicos', desc: 'Espresso + leche texturizada (Café más suave que el cappuccino).', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Tamaño A', price: 2.00 }, { label: 'Tamaño B', price: 2.50 }] },
+      { id: 'cls-latte-macchiato', name: 'Latte Macchiato', category: 'Cafés Clásicos', desc: 'Leche texturizada y medio espresso (café sumamente suave).', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.50 }] },
+      { id: 'flt-v60', name: 'Servicio de V60', category: 'Filtrados', desc: 'Extracción manual en método filtrado V60.', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar precio en barra/WA', price: null }] },
+      { id: 'flt-prensa', name: 'Servicio de Prensa Francesa', category: 'Filtrados', desc: 'Infusión por inmersión con cuerpo marcado en Prensa Francesa.', image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar precio en barra/WA', price: null }] },
+      { id: 'flt-aeropress', name: 'Servicio de Aeropress', category: 'Filtrados', desc: 'Extracción limpia y versátil preparada en Aeropress.', image: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar precio en barra/WA', price: null }] },
+      { id: 'flt-moka', name: 'Servicio de Moka Italiana (Greca)', category: 'Filtrados', desc: 'Preparación tradicional en cafetera Moka Italiana.', image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar precio en barra/WA', price: null }] },
+      { id: 'flt-colao', name: 'Servicio de Café "Colao"', category: 'Filtrados', desc: 'Preparación tradicional de café colado al estilo local.', image: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar precio en barra/WA', price: null }] },
+      { id: 'esp-28grados', name: 'Espresso 28 grados', category: 'Cafés Especiales', desc: 'Doble Espresso + licor de café.', image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 1.80 }] },
+      { id: 'esp-americano-especiado', name: 'Americano Especiado', category: 'Cafés Especiales', desc: 'Espresso + Agua Caliente + Cardamomo y Canela.', image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.00 }] },
+      { id: 'esp-americano-envenenado', name: 'Americano envenenado', category: 'Cafés Especiales', desc: 'Espresso + Agua Caliente + licor de café.', image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.00 }] },
+      { id: 'esp-americano-honey', name: 'Americano Honey', category: 'Cafés Especiales', desc: 'Espresso + Miel + Agua Caliente.', image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.00 }] },
+      { id: 'esp-extra-grande', name: 'Café Extra Extra Grande', category: 'Cafés Especiales', desc: 'Medio litro o 17 oz de café Cappuccino.', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80', variants: [{ label: '17 oz / 500 ml', price: 4.00 }] },
+      { id: 'esp-latte-vainilla', name: 'Latte Vainilla', category: 'Cafés Especiales', desc: 'Café latte + jarabe de vainilla.', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.80 }] },
+      { id: 'esp-latte-dulce-leche', name: 'Latte Dulce de Leche', category: 'Cafés Especiales', desc: 'Café latte + dulce de leche.', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 3.00 }] },
+      { id: 'esp-latte-honey', name: 'Latte Honey', category: 'Cafés Especiales', desc: 'Espresso + Miel + Leche Texturizada.', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 3.00 }] },
+      { id: 'esp-latte-cinnamon', name: 'Latte Cinnamon', category: 'Cafés Especiales', desc: 'Café latte + miel + canela.', image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 3.00 }] },
+      { id: 'esp-latte-amaretto', name: 'Latte Amaretto', category: 'Cafés Especiales', desc: 'Café Latte + jarabe de amaretto.', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 3.00 }] },
+      { id: 'esp-latte-ponche', name: 'Latte Ponche Crema', category: 'Cafés Especiales', desc: 'Café Latte + ponche crema.', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 3.00 }] },
+      { id: 'esp-golden-latte', name: 'Golden Latte', category: 'Cafés Especiales', desc: 'Espresso + jengibre + cúrcuma + leche texturizada.', image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.80 }] },
+      { id: 'esp-cap-americano', name: 'Cappuccino Americano', category: 'Cafés Especiales', desc: 'Café cappuccino + crema chantilly + cacao en polvo o canela (a escoger).', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Con Chantilly', price: 3.50 }] },
+      { id: 'esp-latte-chocomani', name: 'Latte Choco-Maní', category: 'Cafés Especiales', desc: 'Café latte + crema de chocolate con maní (producto local).', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Producto local', price: 3.50 }] },
+      { id: 'esp-moka', name: 'Café Moka', category: 'Cafés Especiales', desc: 'Doble espresso corto + sirope de chocolate + leche texturizada.', image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 3.00 }] },
+      { id: 'esp-moka-menta', name: 'Café Moka Menta', category: 'Cafés Especiales', desc: 'Doble Espresso corto + sirope de chocolate + menta + leche texturizada.', image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Menta', price: 3.50 }] },
+      { id: 'esp-moka-nutella', name: 'Café Moka Nutella', category: 'Cafés Especiales', desc: 'Café Moka con base de nutella.', image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Con Nutella', price: 3.50 }] },
+      { id: 'esp-moka-masala', name: 'Café Moka Masala', category: 'Cafés Especiales', desc: 'Doble Espresso corto + chocolate especiado (jengibre, pimienta negra, cardamomo y sarrapia).', image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Especiado', price: 4.00 }] },
+      { id: 'esp-moka-americano', name: 'Moka Americano', category: 'Cafés Especiales', desc: 'Café Moka + chantilly.', image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Con Chantilly', price: 4.50 }] },
+      { id: 'esp-ginger-miel', name: 'Espresso Ginger Miel', category: 'Cafés Especiales', desc: 'Doble espresso + miel + jengibre.', image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Doble', price: 2.50 }] },
+      { id: 'esp-miel-macchiato', name: 'Café Miel estilo Macchiato', category: 'Cafés Especiales', desc: 'Doble espresso + miel + leche texturizada (sobre el espresso).', image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.80 }] },
+      { id: 'esp-bombon-clasico', name: 'Café Bombón Clásico', category: 'Cafés Especiales', desc: 'Leche condensada + espresso.', image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Clásico', price: 2.20 }] },
+      { id: 'esp-bombon-macchiato', name: 'Café Bombón Macchiato', category: 'Cafés Especiales', desc: 'Leche condensada + espresso + dos cucharadas de leche texturizada.', image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Macchiato', price: 2.80 }] },
+      { id: 'esp-bombon-especial', name: 'Café Bombón Especial', category: 'Cafés Especiales', desc: 'Leche condensada + doble espresso + leche texturizada + ralladura de limón.', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Especial', price: 3.50 }] },
+      { id: 'esp-bombon-envenenado', name: 'Café Bombón Envenenado', category: 'Cafés Especiales', desc: 'Ponche Crema + doble espresso + leche texturizada.', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Con Ponche Crema', price: 4.00 }] },
+      { id: 'esp-irlandes', name: 'Café Irlandés', category: 'Cafés Especiales', desc: 'Espresso + agua caliente + azúcar + licor de whiskey + crema chantilly.', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Caliente', price: 4.00 }] },
+      { id: 'esp-carajillo', name: 'Café Carajillo', category: 'Cafés Especiales', desc: 'Americano dulce + ron + zumo de limón.', image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Caliente', price: 3.50 }] },
+      { id: 'cal-choc', name: 'Chocolate Caliente', category: 'Bebidas Calientes', desc: 'Bebida caliente tradicional de chocolate.', image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 3.50 }] },
+      { id: 'cal-choc-envenenado', name: 'Chocolate "envenenado"', category: 'Bebidas Calientes', desc: 'Chocolate caliente con toque licorado de la casa.', image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Especial', price: 4.00 }] },
+      { id: 'cal-choc-cafe', name: 'Chocolate Caliente con café', category: 'Bebidas Calientes', desc: 'Combinación de chocolate caliente y café.', image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Con café', price: 4.00 }] },
+      { id: 'cal-choc-menta', name: 'Chocolate con Menta', category: 'Bebidas Calientes', desc: 'Chocolate caliente infusionado con menta.', image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Menta', price: 4.00 }] },
+      { id: 'cal-choc-cardamomo', name: 'Chocolate con Cardamomo', category: 'Bebidas Calientes', desc: 'Chocolate caliente aromatizado con cardamomo.', image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Cardamomo', price: 4.00 }] },
+      { id: 'cal-chai-orig', name: 'Chai original', category: 'Bebidas Calientes', desc: 'Té negro, cardamomo, jengibre, clavito, pimienta, anís estrellado, canela y semillas de hinojo y cilantro.', image: 'https://images.unsplash.com/photo-1561336313-0bd5e0b27ec8?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Original', price: 2.50 }] },
+      { id: 'cal-chai-ginger', name: 'Chai Ginger', category: 'Bebidas Calientes', desc: 'Té negro, cardamomo, jengibre, clavito, pimienta, anís estrellado, y semillas de hinojo y cilantro (no lleva canela).', image: 'https://images.unsplash.com/photo-1561336313-0bd5e0b27ec8?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Sin canela', price: 2.50 }] },
+      { id: 'cal-chai-vainilla', name: 'Chai Vainilla', category: 'Bebidas Calientes', desc: 'Té negro, cardamomo, clavito, anís estrellado, canela, nuez moscada, pimienta y sarrapia.', image: 'https://images.unsplash.com/photo-1561336313-0bd5e0b27ec8?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Vainilla', price: 2.50 }] },
+      { id: 'cal-merida-floral', name: 'Infusión Mérida Floral', category: 'Bebidas Calientes', desc: 'Manzanilla, pétalos de rosa, de caléndula y un toque de canela.', image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Infusión', price: 2.50 }] },
+      { id: 'cal-fusion-verde', name: 'Fusión Verde', category: 'Bebidas Calientes', desc: 'Té verde, jengibre, yerbabuena, y limón.', image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Caliente', price: 2.50 }] },
+      { id: 'cal-jamaica', name: 'Infusión Flor de Jamaica', category: 'Bebidas Calientes', desc: 'Infusión natural de Flor de Jamaica (limón opcional).', image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Limón opcional', price: 2.00 }] },
+      { id: 'cal-te-negro', name: 'Té negro', category: 'Bebidas Calientes', desc: 'Infusión clásica de té negro.', image: 'https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.00 }] },
+      { id: 'cal-te-verde', name: 'Té verde', category: 'Bebidas Calientes', desc: 'Infusión clásica de té verde.', image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.00 }] },
+      { id: 'cal-matcha', name: 'Té Matcha', category: 'Bebidas Calientes', desc: 'Té verde matcha preparado al estilo tradicional.', image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.50 }] },
+      { id: 'cal-latte-matcha', name: 'Latte Matcha', category: 'Bebidas Calientes', desc: 'Matcha combinado con leche.', image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Con leche', price: 3.00 }] },
+      { id: 'cal-tisana-chai', name: 'Tisana Chai de Hierbas', category: 'Bebidas Calientes', desc: 'Manzanilla, cardamomo, jengibre, clavito, pimienta, anís estrellado, canela, semillas de hinojo y cilantro.', image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Tisana', price: 2.50 }] },
+      { id: 'cal-tisana-spicata', name: 'Tisana Flor Spicata', category: 'Bebidas Calientes', desc: 'Flor de jamaica, jengibre, limón, y yerbabuena.', image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Tisana', price: 2.50 }] },
+      { id: 'cal-te-blanco', name: 'Té Blanco (Pai Mu Tan)', category: 'Bebidas Calientes', desc: 'Pai Mu Tan: Té blanco chino de la provincia de Fuijian, aroma frutal, sabor sutil y dulce.', image: 'https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Pai Mu Tan', price: 2.50 }] },
+      { id: 'cal-oolong', name: 'Oolong (Té azul)', category: 'Bebidas Calientes', desc: 'Milk Oolong: Té chino de la provincia de Fujian, aroma frutal, sabor dulce.', image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Milk Oolong', price: 2.50 }] },
+      { id: 'fria-aerocano', name: 'Aerocano', category: 'Cafés y Bebidas Frías', desc: 'Espresso + hielos texturizados para airear la bebida y lograr una sensación de cuerpo.', image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.50 }] },
+      { id: 'fria-aerocano-limon', name: 'Aerocano con limón', category: 'Cafés y Bebidas Frías', desc: 'Aerocano + limón.', image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Con limón', price: 2.20 }] },
+      { id: 'fria-iced-coffee', name: 'Iced Coffee', category: 'Cafés y Bebidas Frías', desc: 'Espresso cocteleado + hielos de café + leche fría + azúcar.', image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Clásico', price: 3.00 }, { label: 'Con Chantilly', price: 4.00 }] },
+      { id: 'fria-iced-latte-matcha', name: 'Iced Latte Matcha', category: 'Cafés y Bebidas Frías', desc: 'Matcha + leche fría + hielo.', image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Frío', price: 3.00 }] },
+      { id: 'fria-iced-espresso-matcha', name: 'Iced Espresso Matcha', category: 'Cafés y Bebidas Frías', desc: 'Espresso + matcha + leche fría + hielos de café (azúcar opcional).', image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Azúcar opcional', price: 3.50 }] },
+      { id: 'fria-nutella-iced', name: 'Nutella Iced Coffee', category: 'Cafés y Bebidas Frías', desc: 'Iced coffee con base de Nutella.', image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Base Nutella', price: 4.00 }] },
+      { id: 'fria-affogato', name: 'Café Affogato', category: 'Cafés y Bebidas Frías', desc: 'Porción de helado + Espresso.', image: 'https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Helado + Espresso', price: 3.50 }] },
+      { id: 'fria-latte-frappe', name: 'Latte Frappe', category: 'Cafés y Bebidas Frías', desc: 'Espresso + helado + leche + hielo (helado de decoración). Chantilly solo para el de 500ml.', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80', variants: [{ label: '300 ml', price: 4.00 }, { label: '500 ml (+ Chantilly)', price: 6.00 }] },
+      { id: 'fria-frappe-oreo', name: 'Latte Frappe Oreo', category: 'Cafés y Bebidas Frías', desc: 'Latte frappe acompañado de galletas oreo y chocolate.', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80', variants: [{ label: '300 ml', price: 5.00 }, { label: '500 ml', price: 7.00 }] },
+      { id: 'fria-frappe-licores', name: 'Latte Frappe con licores a escoger', category: 'Cafés y Bebidas Frías', desc: 'Opciones de licor a escoger: Licor de Café, Ron, Whiskey o Brandy.', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80', variants: [{ label: '300 ml', price: 4.50 }, { label: '500 ml', price: 6.50 }] },
+      { id: 'fria-frappe-vainilla', name: 'Latte Frappe de Vainilla', category: 'Cafés y Bebidas Frías', desc: 'Latte frappe acompañado de jarabe de vainilla.', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80', variants: [{ label: '300 ml', price: 4.50 }, { label: '500 ml', price: 6.50 }] },
+      { id: 'fria-irlandes', name: 'Café Irlandés Frío', category: 'Cafés y Bebidas Frías', desc: 'Espresso Cocteleado + agua fría + hielos de café + licor de whiskey + azúcar + crema chantilly.', image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Frío', price: 4.50 }] },
+      { id: 'fria-carajillo', name: 'Café Carajillo Frío', category: 'Cafés y Bebidas Frías', desc: 'Espresso cocteleado + agua fría + hielos de café + ron + zumo de limón + azúcar.', image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Frío', price: 3.50 }] },
+      { id: 'fria-batidos', name: 'Batidos de Fruta', category: 'Cafés y Bebidas Frías', desc: 'Batido natural preparado con fruta.', image: 'https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Estándar', price: 2.50 }] },
+      { id: 'fria-merengada-frutas', name: 'Merengada de frutas', category: 'Cafés y Bebidas Frías', desc: 'Merengada cremosa de frutas.', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80', variants: [{ label: '300 ml', price: 4.00 }, { label: '500 ml', price: 6.00 }] },
+      { id: 'fria-merengada-oreo', name: 'Merengada Oreo', category: 'Cafés y Bebidas Frías', desc: 'Merengada con galletas Oreo.', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80', variants: [{ label: '300 ml', price: 4.50 }, { label: '500 ml', price: 6.50 }] },
+      { id: 'fria-merengada-brownie', name: 'Merengada Brownie', category: 'Cafés y Bebidas Frías', desc: 'Merengada con brownie.', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80', variants: [{ label: '300 ml', price: 5.00 }, { label: '500 ml', price: 7.00 }] },
+      { id: 'fria-tes-infusiones', name: 'Tés Fríos e infusiones', category: 'Cafés y Bebidas Frías', desc: 'Té negro frío con Limón, Té verde Frío con Limón, Infusión Flor de Jamaica fría con Limón o con Canela y limón.', image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Frío', price: 2.70 }] },
+      { id: 'fria-rosa-negra', name: 'Rosa negra', category: 'Cafés y Bebidas Frías', desc: 'Té negro, jamaica, guayabita, pimienta negra y sarrapia.', image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Fría', price: 2.70 }] },
+      { id: 'fria-fusion-verde', name: 'Fusión Verde Fría', category: 'Cafés y Bebidas Frías', desc: 'Té verde, jengibre, yerbabuena, y limón.', image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Fría', price: 2.70 }] },
+      { id: 'fria-tisana-spicata', name: 'Tisana Fría Flor Spicata', category: 'Cafés y Bebidas Frías', desc: 'Flor de jamaica, jengibre, limón y yerbabuena.', image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Fría', price: 2.70 }] },
+      { id: 'fria-tes-chais', name: 'Tés Chais Fríos', category: 'Cafés y Bebidas Frías', desc: 'Variedad de chai servido frío.', image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Frío', price: 2.70 }] },
+      { id: 'fria-agua-mineral', name: 'Agua Mineral', category: 'Cafés y Bebidas Frías', desc: 'Agua mineral refrescante.', image: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Presentación A', price: 1.30 }, { label: 'Presentación B', price: 1.80 }] },
+      { id: 'ext-postres', name: 'Postres y tortas', category: 'Postres, Salados y Grano', desc: 'Opciones dulces y tortas artesanales de la carta Nexos.', image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar disponibilidad/precio', price: null }] },
+      { id: 'ext-postres-frios', name: 'Tortas y postres fríos', category: 'Postres, Salados y Grano', desc: 'Alternativas frías de repostería.', image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar disponibilidad/precio', price: null }] },
+      { id: 'ext-galletas', name: 'Galletas', category: 'Postres, Salados y Grano', desc: 'Galletas recién horneadas para acompañar tu café.', image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar disponibilidad/precio', price: null }] },
+      { id: 'ext-pizzas', name: 'Pizzas', category: 'Postres, Salados y Grano', desc: 'Alternativa salada de la casa.', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar disponibilidad/precio', price: null }] },
+      { id: 'ext-tequenos', name: 'Tequeños', category: 'Postres, Salados y Grano', desc: 'Pasapalo salado clásico.', image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar disponibilidad/precio', price: null }] },
+      { id: 'ext-medialunas', name: 'Media Lunas rellenas', category: 'Postres, Salados y Grano', desc: 'Media lunas rellenas para acompañar.', image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar disponibilidad/precio', price: null }] },
+      { id: 'ext-desayunos', name: 'Desayunos', category: 'Postres, Salados y Grano', desc: 'Opciones de desayuno desde las 8:30 a.m.', image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=600&q=80', variants: [{ label: 'Consultar disponibilidad/precio', price: null }] },
+      { id: 'ext-grano-molido', name: 'Café Nexos Molido / en Grano', category: 'Postres, Salados y Grano', desc: 'Presentaciones disponibles: 250 g, 500 g y 1 Kg (Café Molido o Café en Grano).', image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80', variants: [{ label: '250 g (Consultar precio)', price: null }, { label: '500 g (Consultar precio)', price: null }, { label: '1 Kg (Consultar precio)', price: null }] }
+    ];
+
+    const categories = ['Todos', 'Cafés Clásicos', 'Cafés Especiales', 'Filtrados', 'Bebidas Calientes', 'Cafés y Bebidas Frías', 'Postres, Salados y Grano'];
+    let activeCategory = 'Todos';
+    let searchQuery = '';
+    let cart = [];
+    let orderMode = 'Consumo en el lugar';
+    const selectedIngredients = new Set();
+    let isBrewing = false;
+    let lastCustomDrink = null;
+
+    function escapeAttr(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function renderCategoryTabs() {
+      const container = document.getElementById('category-tabs');
+      if (!container) return;
+      container.innerHTML = '';
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isActive = cat === activeCategory;
+        btn.className = `px-4 py-2 rounded-full text-xs font-mono uppercase tracking-wider border transition-all ${
+          isActive ? 'bg-nexos-copper text-nexos-bg border-nexos-copper font-semibold' : 'bg-nexos-surface text-nexos-muted border-nexos-border hover:text-nexos-text'
+        }`;
+        btn.textContent = cat;
+        btn.addEventListener('click', () => {
+          activeCategory = cat;
+          renderCategoryTabs();
+          renderMenuGrid();
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    function formatPriceSummary(variants) {
+      const priced = variants.filter(v => typeof v.price === 'number');
+      if (priced.length === 0) return 'Consultar';
+      if (priced.length === 1) return `$${priced[0].price.toFixed(2)}`;
+      return priced.map(v => `$${v.price.toFixed(2)}`).join(' / ');
+    }
+
+    function renderMenuGrid() {
+      const grid = document.getElementById('menu-grid');
+      const emptyBox = document.getElementById('menu-empty');
+      if (!grid) return;
+
+      const filtered = menuItems.filter(item => {
+        const matchesCat = activeCategory === 'Todos' || item.category === activeCategory;
+        const matchesQuery = !searchQuery ||
+          item.name.toLowerCase().includes(searchQuery) ||
+          item.desc.toLowerCase().includes(searchQuery) ||
+          item.category.toLowerCase().includes(searchQuery);
+        return matchesCat && matchesQuery;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        if (emptyBox) emptyBox.classList.remove('hidden');
+        return;
+      }
+
+      if (emptyBox) emptyBox.classList.add('hidden');
+      grid.innerHTML = filtered.map(item => {
+        const hasMultipleVariants = item.variants.length > 1;
+        const defaultVariant = item.variants[0];
+        const variantControls = hasMultipleVariants
+          ? `<select id="var-${escapeAttr(item.id)}" class="w-full mb-3 bg-nexos-bg border border-nexos-border focus:border-nexos-copper rounded-xl px-3 py-2 text-xs text-nexos-text outline-none">${
+              item.variants.map((v, idx) => `<option value="${idx}">${escapeAttr(v.label)}${typeof v.price === 'number' ? ` — $${v.price.toFixed(2)}` : ''}</option>`).join('')
+            }</select>`
+          : `<div class="font-mono text-[11px] text-nexos-muted mb-3">${escapeAttr(defaultVariant.label)}</div>`;
+
+        return `
+          <article class="bg-nexos-surface hover:bg-nexos-surfaceHover border border-nexos-border rounded-2xl overflow-hidden flex flex-col justify-between transition-all group">
+            <div>
+              <div class="relative h-40 bg-nexos-bg overflow-hidden border-b border-nexos-border">
+                <img src="${escapeAttr(item.image)}" alt="${escapeAttr(item.name)}" loading="lazy" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-[#231F1C] to-[#12100E] text-nexos-copper font-serif text-3xl">Nexos</div>
+                <span class="absolute top-3 left-3 font-mono text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-md bg-nexos-bg/85 border border-nexos-border text-nexos-gold">${escapeAttr(item.category)}</span>
+              </div>
+              <div class="p-5">
+                <div class="flex items-start justify-between gap-3 mb-2">
+                  <h3 class="font-serif text-2xl text-nexos-text group-hover:text-nexos-gold transition-colors leading-snug">${escapeAttr(item.name)}</h3>
+                  <span class="font-mono text-sm font-semibold text-nexos-gold shrink-0 pt-1">${formatPriceSummary(item.variants)}</span>
+                </div>
+                <p class="text-xs text-nexos-muted leading-relaxed">${escapeAttr(item.desc)}</p>
+              </div>
+            </div>
+            <div class="px-5 pb-5 pt-2">
+              ${variantControls}
+              <button type="button" data-add-item="${escapeAttr(item.id)}" class="w-full py-2.5 px-4 rounded-xl bg-nexos-bg hover:bg-nexos-copper text-nexos-text hover:text-nexos-bg border border-nexos-border hover:border-nexos-copper text-xs font-medium transition-all">
+                ${typeof defaultVariant.price === 'number' || hasMultipleVariants ? '+ Agregar' : '+ Consultar por WhatsApp'}
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      grid.querySelectorAll('[data-add-item]').forEach(btn => {
+        btn.addEventListener('click', () => handleAddMenuItem(btn.getAttribute('data-add-item')));
+      });
+    }
+
+    function handleAddMenuItem(itemId) {
+      const item = menuItems.find(m => m.id === itemId);
+      if (!item) return;
+      const selectEl = document.getElementById(`var-${item.id}`);
+      const variantIndex = selectEl ? parseInt(selectEl.value, 10) : 0;
+      const chosen = item.variants[variantIndex] || item.variants[0];
+      const displayName = item.variants.length > 1 ? `${item.name} (${chosen.label})` : item.name;
+      addToCart(`${item.id}-${variantIndex}`, displayName, chosen.price);
+    }
+
+    function addToCart(id, name, price) {
+      const numericPrice = typeof price === 'number' ? price : null;
+      const existing = cart.find(c => c.id === id);
+      if (existing) existing.qty += 1;
+      else cart.push({ id, name, price: numericPrice, qty: 1 });
+      renderCartUI();
+      showToast(`Añadido: ${name}`);
+    }
+
+    function updateCartQty(id, delta) {
+      const item = cart.find(c => c.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+      renderCartUI();
+    }
+
+    function clearCart() {
+      cart = [];
+      renderCartUI();
+      showToast('Selección vaciada');
+    }
+
+    function setOrderMode(mode) {
+      orderMode = mode;
+      const btnLocal = document.getElementById('mode-local');
+      const btnLlevar = document.getElementById('mode-llevar');
+      if (!btnLocal || !btnLlevar) return;
+      if (mode === 'Consumo en el lugar') {
+        btnLocal.className = 'py-2 px-2.5 rounded-xl text-xs font-medium bg-nexos-copper text-nexos-bg transition-all';
+        btnLlevar.className = 'py-2 px-2.5 rounded-xl text-xs font-medium bg-nexos-bg border border-nexos-border text-nexos-muted hover:text-nexos-text transition-all';
+      } else {
+        btnLlevar.className = 'py-2 px-2.5 rounded-xl text-xs font-medium bg-nexos-copper text-nexos-bg transition-all';
+        btnLocal.className = 'py-2 px-2.5 rounded-xl text-xs font-medium bg-nexos-bg border border-nexos-border text-nexos-muted hover:text-nexos-text transition-all';
+      }
+    }
+
+    function renderCartUI() {
+      const listEl = document.getElementById('cart-items-list');
+      const headerBadge = document.getElementById('header-cart-count');
+      const sidebarBadge = document.getElementById('sidebar-badge');
+      const totalEl = document.getElementById('cart-total-amount');
+      const submitBtn = document.getElementById('whatsapp-submit-btn');
+      const clearBtn = document.getElementById('clear-cart-btn');
+      if (!listEl) return;
+
+      const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+      const totalPrice = cart.reduce((sum, i) => sum + (typeof i.price === 'number' ? i.price * i.qty : 0), 0);
+      const hasConsultItems = cart.some(i => typeof i.price !== 'number');
+
+      if (headerBadge) headerBadge.textContent = totalQty;
+      if (sidebarBadge) sidebarBadge.textContent = `${totalQty} ${totalQty === 1 ? 'ítem' : 'ítems'}`;
+      if (totalEl) totalEl.textContent = hasConsultItems ? `$${totalPrice.toFixed(2)} + cons.` : `$${totalPrice.toFixed(2)}`;
+
+      if (cart.length === 0) {
+        if (submitBtn) submitBtn.disabled = true;
+        if (clearBtn) clearBtn.classList.add('hidden');
+        listEl.innerHTML = `<p class="text-xs text-nexos-muted py-6 text-center bg-nexos-bg/60 rounded-xl border border-nexos-border/60">Aún no has agregado productos del catálogo o del Laboratorio Barista.</p>`;
+        return;
+      }
+
+      if (submitBtn) submitBtn.disabled = false;
+      if (clearBtn) clearBtn.classList.remove('hidden');
+
+      listEl.innerHTML = cart.map(item => `
+        <div class="p-3 rounded-xl bg-nexos-bg border border-nexos-border flex items-center justify-between gap-2.5">
+          <div class="min-w-0 flex-1">
+            <div class="text-xs font-medium text-nexos-text truncate">${escapeAttr(item.name)}</div>
+            <div class="font-mono text-[11px] text-nexos-gold">${typeof item.price === 'number' ? `$${(item.price * item.qty).toFixed(2)}` : 'Consultar precio'}</div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" onclick="updateCartQty('${escapeAttr(item.id)}', -1)" class="w-6 h-6 rounded-md bg-nexos-surface border border-nexos-border text-nexos-text text-xs">−</button>
+            <span class="font-mono text-xs w-4 text-center">${item.qty}</span>
+            <button type="button" onclick="updateCartQty('${escapeAttr(item.id)}', 1)" class="w-6 h-6 rounded-md bg-nexos-surface border border-nexos-border text-nexos-text text-xs">+</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function sendWhatsAppOrder() {
+      if (cart.length === 0) return;
+      const paymentMethod = document.getElementById('order-payment-method').value;
+      const notes = document.getElementById('order-notes').value.trim();
+      let total = 0;
+      let hasConsultItems = false;
+
+      const itemsText = cart.map(item => {
+        if (typeof item.price === 'number') {
+          const sub = item.price * item.qty;
+          total += sub;
+          return `• ${item.qty}x ${item.name} — $${sub.toFixed(2)}`;
+        }
+        hasConsultItems = true;
+        return `• ${item.qty}x ${item.name} — Consultar precio`;
+      }).join('\n');
+
+      let msg = `Hola *Nexos Café* (Av. 5 entre calles 16 y 17, Mérida), quisiera realizar el siguiente pedido:\n\n*Modalidad:* ${orderMode}\n*Método de Pago:* ${paymentMethod}\n\n*Detalle del Pedido:*\n${itemsText}\n\n*Subtotal Estimado:* $${total.toFixed(2)}${hasConsultItems ? ' (más ítems por consultar)' : ''}`;
+      if (notes) msg += `\n*Notas:* ${notes}`;
+      window.open(`https://wa.me/584120744298?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
+    }
+
+    function initCatalog() {
+      renderCategoryTabs();
+      renderMenuGrid();
+      renderCartUI();
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+
+      const searchInput = document.getElementById('menu-search');
+      if (searchInput && !searchInput.dataset.bound) {
+        searchInput.dataset.bound = '1';
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value.trim().toLowerCase();
+          renderMenuGrid();
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCatalog);
+    } else {
+      initCatalog();
+    }
+  </script>

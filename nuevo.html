@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexos Café — Catálogo & Laboratorio Barista | Mérida</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Cormorant Garamond (Editorial) + Inter (UI) + JetBrains Mono (Especificaciones) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            nexos: {
+              bg: '#0E0D0C',
+              surface: '#171513',
+              surfaceHover: '#1F1C19',
+              border: '#2B2723',
+              text: '#F5F2EB',
+              muted: '#A69F95',
+              copper: '#D4784A',
+              copperHover: '#BE6437',
+              gold: '#E3B678',
+            }
+          },
+          fontFamily: {
+            serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       ESTILOS VISUALES & ANIMACIONES DE EXTRACCIÓN BARISTA
+       ========================================================================== */
+    body {
+      background-color: #0E0D0C;
+      color: #F5F2EB;
+      overflow-x: hidden;
+    }
+
+    .hero-glow {
+      background: radial-gradient(circle at 50% 20%, rgba(212, 120, 74, 0.16) 0%, rgba(227, 182, 120, 0.06) 38%, rgba(14, 13, 12, 0) 72%);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes brewStream {
+      0% { height: 0; opacity: 0.95; }
+      20% { height: 72px; opacity: 1; }
+      85% { height: 72px; opacity: 1; }
+      100% { height: 0; opacity: 0; transform: translateY(72px); }
+    }
+
+    @keyframes steamRise {
+      0% { transform: translateY(0) scale(0.9); opacity: 0; }
+      45% { opacity: 0.65; }
+      100% { transform: translateY(-28px) scale(1.25); opacity: 0; }
+    }
+
+    @keyframes gaugeNeedle {
+      0% { transform: rotate(-65deg); }
+      30% { transform: rotate(35deg); }
+      70% { transform: rotate(44deg); }
+      100% { transform: rotate(-65deg); }
+    }
+
+    @keyframes machineShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-1.5px); }
+      75% { transform: translateX(1.5px); }
+    }
+
+    .brewing-active .espresso-machine-box {
+      animation: machineShake 0.18s infinite;
+    }
+    .brewing-active .liquid-stream {
+      animation: brewStream 2.4s ease-in-out forwards;
+    }
+    .brewing-active .gauge-needle {
+      animation: gaugeNeedle 2.6s ease-in-out forwards;
+    }
+
+    .steam-wisp {
+      opacity: 0;
+    }
+    .cup-ready .steam-wisp {
+      animation: steamRise 2.4s ease-out infinite;
+    }
+    .cup-ready .steam-wisp:nth-child(2) {
+      animation-delay: 0.8s;
+    }
+    .cup-ready .steam-wisp:nth-child(3) {
+      animation-delay: 1.5s;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0E0D0C;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2B2723;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #D4784A;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-nexos-copper/30 selection:text-nexos-text">
+
+  <!-- Notificación Toast Flotante -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 translate-y-3">
+    <div class="bg-nexos-surface border border-nexos-copper/60 text-nexos-text px-5 py-2.5 rounded-full text-xs sm:text-sm shadow-2xl flex items-center gap-2.5">
+      <span class="w-2 h-2 rounded-full bg-nexos-copper animate-pulse"></span>
+      <span id="toast-msg">Acción completada</span>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       1. HEADER EDITORIAL FIJO
+       ========================================================================== -->
+  <header class="sticky top-0 z-40 bg-nexos-bg/90 backdrop-blur-md border-b border-nexos-border">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <a href="#" class="flex items-center gap-3 group shrink-0">
+        <div class="w-8 h-8 rounded-lg bg-nexos-surface border border-nexos-border flex items-center justify-center text-nexos-copper font-serif text-xl font-semibold group-hover:border-nexos-copper transition-colors">
+          N
+        </div>
+        <div class="flex items-baseline gap-2.5">
+          <span class="font-serif text-xl sm:text-2xl tracking-wider uppercase font-semibold text-nexos-text">Nexos Café</span>
+          <span class="hidden xl:inline-block font-mono text-[10px] uppercase tracking-widest px-2 py-0.5 rounded bg-nexos-surface border border-nexos-border text-nexos-gold">
+            Mérida · Av. 5
+          </span>
+        </div>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-6 text-xs uppercase tracking-widest text-nexos-muted">
+        <a href="#experiencia" class="hover:text-nexos-copper transition-colors">Experiencia</a>
+        <a href="#laboratorio" class="hover:text-nexos-copper transition-colors">Laboratorio Barista</a>
+        <a href="#catalogo" class="hover:text-nexos-copper transition-colors">Catálogo</a>
+        <a href="#promociones" class="hover:text-nexos-copper transition-colors">Promociones</a>
+        <a href="#pagos" class="hover:text-nexos-copper transition-colors">Métodos de Pago</a>
+        <button type="button" onclick="openLegalModal('seguridad')" class="hover:text-nexos-copper transition-colors uppercase tracking-widest">Legales</button>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-nexos-surface border border-nexos-border text-xs text-nexos-muted">
+          <span class="w-1.5 h-1.5 rounded-full bg-nexos-copper"></span>
+          <span>Abre 8:30 a.m.</span>
+        </div>
+
+        <a href="#catalogo" class="flex items-center gap-2 bg-nexos-surface hover:bg-nexos-surfaceHover border border-nexos-border hover:border-nexos-copper/60 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all">
+          <svg class="w-4 h-4 text-nexos-copper" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+          </svg>
+          <span>Tu Selección</span>
+          <span id="header-cart-count" class="bg-nexos-copper text-nexos-bg font-mono font-semibold px-1.5 py-0.2 rounded-full">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       2. HERO EDITORIAL & MÉTRICAS DE EXTRACCIÓN
+       ========================================================================== -->
+  <section id="experiencia" class="relative hero-glow border-b border-nexos-border">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-14 pb-20 sm:pt-20 sm:pb-24">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+
+        <div class="lg:col-span-7">
+          <div class="flex flex-wrap items-center gap-2.5 mb-6 font-mono text-xs">
+            <span class="px-3 py-1 rounded-full bg-nexos-surface border border-nexos-border text-nexos-gold">
+              ★ 4.8 <span class="text-nexos-muted">(64 opiniones)</span>
+            </span>
+            <span class="px-3 py-1 rounded-full bg-nexos-surface border border-nexos-border text-nexos-copper">
+              Rango $1 – $5
+            </span>
+            <span class="px-3 py-1 rounded-full bg-nexos-surface border border-nexos-border text-nexos-muted">
+              Consumo en el lugar · Para llevar
+            </span>
+          </div>
+
+          <h1 class="font-serif text-5xl sm:text-6xl lg:text-[4.8rem] leading-[0.98] tracking-tight font-medium text-nexos-text mb-6">
+            NEXOS <span class="italic font-normal text-nexos-copper">CAFÉ.</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-nexos-muted leading-relaxed max-w-xl mb-6 font-light">
+            Cafetería de especialidad, métodos filtrados, bebidas frías y calientes, postres y alternativas saladas en el corazón de Mérida. Diseña tu propia bebida en el <span class="text-nexos-text font-normal">Laboratorio Barista</span> o arma tu pedido para WhatsApp.
+          </p>
+
+          <div class="p-4 rounded-2xl bg-nexos-surface/80 border border-nexos-border mb-8 space-y-1.5 text-xs sm:text-sm">
+            <div class="flex flex-wrap items-center gap-2 text-nexos-text">
+              <span class="text-nexos-copper">📍</span>
+              <span>Entre calles 16 y 17, Avenida 5, Mérida 5115, Venezuela</span>
+              <button type="button" onclick="copyToClipboard('HVX6+V6 Mérida', 'Plus Code HVX6+V6 Mérida copiado')" class="font-mono text-[11px] px-2 py-0.5 rounded bg-nexos-bg border border-nexos-border text-nexos-gold hover:border-nexos-copper transition-colors">
+                HVX6+V6 Mérida
+              </button>
+            </div>
+            <div class="flex flex-wrap items-center gap-4 text-nexos-muted text-xs pt-1">
+              <span>🕒 Abre 8:30 a.m.</span>
+              <span>•</span>
+              <span>📞 0412-0744298</span>
+              <span>•</span>
+              <span>Instagram: @cafenexos</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3.5">
+            <a href="#laboratorio" class="px-6 py-3.5 rounded-xl bg-nexos-copper hover:bg-nexos-copperHover text-nexos-bg font-semibold text-sm tracking-wide transition-all shadow-lg shadow-nexos-copper/20 flex items-center gap-2">
+              <span>Laboratorio Barista</span>
+              <span>→</span>
+            </a>
+            <a href="#catalogo" class="px-6 py-3.5 rounded-xl bg-nexos-surface hover:bg-nexos-surfaceHover border border-nexos-border text-nexos-text font-medium text-sm tracking-wide transition-all">
+              Explorar Catálogo
+            </a>
+            <a href="https://wa.me/584120744298?text=Hola%20Nexos%20Caf%C3%A9%2C%20quisiera%20hacer%20una%20consulta." target="_blank" rel="noopener noreferrer" class="px-5 py-3.5 rounded-xl bg-transparent hover:bg-nexos-surface border border-nexos-border text-nexos-gold text-sm font-medium transition-all">
+              WhatsApp Directo
+            </a>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5">
+          <div class="relative rounded-3xl overflow-hidden border border-nexos-border bg-nexos-surface shadow-2xl aspect-[4/5] max-h-[480px] mx-auto">
+            <img
+              src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=900&q=80"
+              alt="Extracción artesanal de café en Nexos Café Mérida"
+              class="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-700"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="hidden w-full h-full flex-col items-center justify-center p-8 bg-gradient-to-br from-[#1F1C19] to-[#0E0D0C] text-center">
+              <div class="w-20 h-20 rounded-full border border-nexos-copper/50 flex items-center justify-center font-serif text-4xl text-nexos-copper mb-4">N</div>
+              <p class="font-serif text-2xl text-nexos-text">Nexos Café Mérida</p>
+              <p class="font-mono text-xs text-nexos-muted mt-1">93°C · 9 BAR · 28s</p>
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-nexos-bg via-transparent to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+              <div>
+                <span class="font-mono text-[10px] uppercase tracking-widest text-nexos-gold block">Tueste de Origen</span>
+                <span class="font-serif text-xl text-nexos-text">Extracción Calibrada</span>
+              </div>
+              <span class="font-mono text-xs px-2.5 py-1 rounded-lg bg-nexos-bg/85 border border-nexos-border text-nexos-copper">
+                Av. 5 · Mérida
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-12 mt-12 border-t border-nexos-border">
+        <div class="bg-nexos-surface/60 border border-nexos-border rounded-2xl p-5">
+          <span class="font-mono text-[11px] uppercase tracking-widest text-nexos-copper block mb-1">01 / Calibración</span>
+          <div class="font-serif text-3xl sm:text-4xl text-nexos-text">93°C</div>
+          <p class="text-xs text-nexos-muted mt-1">Temperatura térmica estable de infusión</p>
+        </div>
+        <div class="bg-nexos-surface/60 border border-nexos-border rounded-2xl p-5">
+          <span class="font-mono text-[11px] uppercase tracking-widest text-nexos-copper block mb-1">02 / Presión</span>
+          <div class="font-serif text-3xl sm:text-4xl text-nexos-text">9 BAR</div>
+          <p class="text-xs text-nexos-muted mt-1">Extracción constante de crema densa</p>
+        </div>
+        <div class="bg-nexos-surface/60 border border-nexos-border rounded-2xl p-5">
+          <span class="font-mono text-[11px] uppercase tracking-widest text-nexos-copper block mb-1">03 / Tiempo</span>
+          <div class="font-serif text-3xl sm:text-4xl text-nexos-text">28s</div>
+          <p class="text-xs text-nexos-muted mt-1">Curva dulce equilibrada en portafiltro</p>
+        </div>
+        <div class="bg-nexos-surface/60 border border-nexos-border rounded-2xl p-5">
+          <span class="font-mono text-[11px] uppercase tracking-widest text-nexos-copper block mb-1">04 / Rango</span>
+          <div class="font-serif text-3xl sm:text-4xl text-nexos-text">$1–$5</div>
+          <p class="text-xs text-nexos-muted mt-1">Consumo en el lugar o para llevar</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       3. LABORATORIO BARISTA — PREPARA TU TAZA NEXOS (JUEGO INTERACTIVO)
+       ========================================================================== -->
+  <section id="laboratorio" class="py-20 sm:py-24 border-b border-nexos-border bg-nexos-surface/25 reveal">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+        <div>
+          <span class="font-mono text-xs uppercase tracking-widest text-nexos-copper block mb-2">// 01. Experiencia Interactiva</span>
+          <h2 class="font-serif text-4xl sm:text-5xl text-nexos-text">Laboratorio Barista — Prepara tu Taza Nexos</h2>
+        </div>
+        <p class="text-sm text-nexos-muted max-w-md">
+          Escribe el nombre del cliente para grabarlo en la taza, elige los ingredientes y acciona la máquina de espresso para crear tu bebida.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+
+        <div class="lg:col-span-7 bg-nexos-surface border border-nexos-border rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-7">
+          <div>
+            <div class="flex items-center justify-between mb-2.5">
+              <label for="client-name-input" class="font-mono text-xs uppercase tracking-widest text-nexos-gold">
+                Paso 01 · Nombre del Cliente en Taza
+              </label>
+              <span class="font-mono text-[11px] text-nexos-muted">Vista previa en vivo</span>
+            </div>
+            <input
+              type="text"
+              id="client-name-input"
+              maxlength="22"
+              placeholder="Escribe tu nombre (ej. Camila, Alejandro...)"
+              class="w-full bg-nexos-bg border border-nexos-border focus:border-nexos-copper rounded-xl px-4 py-3.5 text-base text-nexos-text placeholder:text-nexos-muted/60 outline-none transition-colors"
+            />
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-mono text-xs uppercase tracking-widest text-nexos-gold">
+                Paso 02 · Combina los Ingredientes
+              </span>
+              <span id="selected-count-label" class="font-mono text-xs text-nexos-muted">0 seleccionados</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="ingredients-grid">
+              <button type="button" onclick="toggleIngredient('cafe')" id="ing-cafe" class="ingredient-btn text-left p-4 rounded-2xl bg-nexos-bg border border-nexos-border hover:border-nexos-copper/50 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexos-surface border border-nexos-border flex items-center justify-center text-nexos-copper font-serif text-lg">
+                    ●
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-nexos-text">Granos de Café</div>
+                    <div class="text-xs text-nexos-muted">Carga Espresso 18g</div>
+                  </div>
+                </div>
+                <span class="ing-status font-mono text-xs px-2.5 py-1 rounded-md bg-nexos-surface text-nexos-muted border border-nexos-border">+ Añadir</span>
+              </button>
+
+              <button type="button" onclick="toggleIngredient('agua')" id="ing-agua" class="ingredient-btn text-left p-4 rounded-2xl bg-nexos-bg border border-nexos-border hover:border-nexos-copper/50 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexos-surface border border-nexos-border flex items-center justify-center text-sky-400 font-serif text-lg">
+                    💧
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-nexos-text">Agua Purificada</div>
+                    <div class="text-xs text-nexos-muted">Infusión a 93°C</div>
+                  </div>
+                </div>
+                <span class="ing-status font-mono text-xs px-2.5 py-1 rounded-md bg-nexos-surface text-nexos-muted border border-nexos-border">+ Añadir</span>
+              </button>
+
+              <button type="button" onclick="toggleIngredient('leche')" id="ing-leche" class="ingredient-btn text-left p-4 rounded-2xl bg-nexos-bg border border-nexos-border hover:border-nexos-copper/50 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexos-surface border border-nexos-border flex items-center justify-center text-amber-100 font-serif text-lg">
+                    🥛
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-nexos-text">Leche Cremada</div>
+                    <div class="text-xs text-nexos-muted">Microespuma sedosa</div>
+                  </div>
+                </div>
+                <span class="ing-status font-mono text-xs px-2.5 py-1 rounded-md bg-nexos-surface text-nexos-muted border border-nexos-border">+ Añadir</span>
+              </button>
+
+              <button type="button" onclick="toggleIngredient('hielo')" id="ing-hielo" class="ingredient-btn text-left p-4 rounded-2xl bg-nexos-bg border border-nexos-border hover:border-nexos-copper/50 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexos-surface border border-nexos-border flex items-center justify-center text-cyan-200 font-serif text-lg">
+                    🧊
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-nexos-text">Cubos de Hielo</div>
+                    <div class="text-xs text-nexos-muted">Choque térmico frío</div>
+                  </div>
+                </div>
+                <span class="ing-status font-mono text-xs px-2.5 py-1 rounded-md bg-nexos-surface text-nexos-muted border border-nexos-border">+ Añadir</span>
+              </button>
+
+              <button type="button" onclick="toggleIngredient('cacao')" id="ing-cacao" class="ingredient-btn sm:col-span-2 text-left p-4 rounded-2xl bg-nexos-bg border border-nexos-border hover:border-nexos-copper/50 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexos-surface border border-nexos-border flex items-center justify-center text-nexos-gold font-serif text-lg">
+                    ✦
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-nexos-text">Cacao Merideño & Canela</div>
+                    <div class="text-xs text-nexos-muted">Toque aromático de autor</div>
+                  </div>
+                </div>
+                <span class="ing-status font-mono text-xs px-2.5 py-1 rounded-md bg-nexos-surface text-nexos-muted border border-nexos-border">+ Añadir</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-nexos-border flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              id="brew-btn"
+              onclick="startBrewing()"
+              class="flex-1 py-4 px-6 rounded-2xl bg-nexos-copper hover:bg-nexos-copperHover text-nexos-bg font-semibold text-sm tracking-wide transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-nexos-copper/20 cursor-pointer"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Preparar en Máquina</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="resetBaristaLab()"
+              class="py-4 px-5 rounded-2xl bg-nexos-bg hover:bg-nexos-surfaceHover border border-nexos-border text-nexos-muted hover:text-nexos-text text-sm font-medium transition-colors"
+            >
+              Reiniciar
+            </button>
+          </div>
+        </div>
+
+        <div id="machine-stage" class="lg:col-span-5 bg-nexos-bg border border-nexos-border rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-between relative overflow-hidden">
+          <div class="w-full flex items-center justify-between border-b border-nexos-border pb-4 mb-4">
+            <span class="font-mono text-[11px] uppercase tracking-widest text-nexos-muted">NEXOS-PRO M1</span>
+            <span id="machine-status-pill" class="font-mono text-xs px-3 py-1 rounded-full bg-nexos-surface border border-nexos-border text-nexos-gold">
+              En espera de carga
+            </span>
+          </div>
+
+          <div class="espresso-machine-box relative w-full max-w-[300px] my-2 flex flex-col items-center">
+            <div class="w-full h-24 bg-gradient-to-b from-[#262320] to-[#1A1816] border border-nexos-border rounded-t-3xl p-4 flex items-center justify-between shadow-xl relative">
+              <div class="w-12 h-12 rounded-full bg-nexos-bg border-2 border-nexos-gold/60 flex items-center justify-center relative shadow-inner">
+                <div class="gauge-needle w-0.5 h-4 bg-nexos-copper origin-bottom rounded-full" style="transform: rotate(-65deg);"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-nexos-text absolute"></div>
+              </div>
+
+              <div class="bg-nexos-bg border border-nexos-border px-3 py-1.5 rounded-lg text-center">
+                <div class="font-mono text-sm text-nexos-copper font-semibold">93.0°C</div>
+                <div class="font-mono text-[9px] text-nexos-muted uppercase">Caldera PID</div>
+              </div>
+
+              <div class="flex flex-col gap-1.5">
+                <span id="led-1" class="w-2.5 h-2.5 rounded-full bg-nexos-border transition-colors"></span>
+                <span id="led-2" class="w-2.5 h-2.5 rounded-full bg-nexos-border transition-colors"></span>
+              </div>
+            </div>
+
+            <div class="w-4/5 h-8 bg-[#141210] border-x border-nexos-border flex flex-col items-center justify-end relative">
+              <div class="w-24 h-5 bg-[#2E2A26] border border-nexos-border rounded-b-xl relative flex justify-center">
+                <div class="w-20 h-2.5 bg-nexos-copper rounded-r-full absolute -right-16 top-1 shadow-md"></div>
+                <div class="w-6 h-2 bg-[#1F1C19] rounded-b-md absolute -bottom-2"></div>
+              </div>
+            </div>
+
+            <div class="w-4/5 h-44 bg-[#12100E] border-x border-nexos-border relative flex flex-col items-center justify-end pb-3 overflow-hidden">
+              <div id="liquid-stream" class="liquid-stream w-2 bg-gradient-to-b from-[#D4784A] via-[#8C4A27] to-[#3E1F0D] rounded-full absolute top-0 opacity-0"></div>
+
+              <div class="flex gap-3 mb-1 z-10">
+                <div class="steam-wisp w-1.5 h-6 rounded-full bg-nexos-text/35 blur-[2px]"></div>
+                <div class="steam-wisp w-1.5 h-8 rounded-full bg-nexos-text/35 blur-[2px]"></div>
+                <div class="steam-wisp w-1.5 h-6 rounded-full bg-nexos-text/35 blur-[2px]"></div>
+              </div>
+
+              <div class="relative flex items-center">
+                <div id="ceramic-cup" class="w-36 h-24 rounded-b-[28px] rounded-t-md bg-gradient-to-br from-[#272320] to-[#171513] border border-nexos-gold/40 shadow-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden transition-all duration-500">
+                  <div id="cup-liquid-fill" class="w-full h-0 bg-[#4A2511] absolute bottom-0 left-0 transition-all duration-1000 opacity-85"></div>
+
+                  <div class="relative z-10 text-center px-2 py-1 rounded-lg bg-nexos-bg/85 border border-nexos-border/80 max-w-full">
+                    <div class="font-mono text-[8px] uppercase tracking-widest text-nexos-copper">NEXOS CAFÉ</div>
+                    <div id="cup-client-label" class="font-serif text-sm font-semibold text-nexos-text truncate max-w-[110px]">
+                      Tu Nombre
+                    </div>
+                  </div>
+                </div>
+                <div class="w-6 h-12 border-4 border-[#272320] rounded-r-2xl -ml-1"></div>
+              </div>
+            </div>
+
+            <div class="w-full h-6 bg-gradient-to-r from-[#1F1C19] via-[#2E2A26] to-[#1F1C19] border border-nexos-border rounded-b-2xl shadow-lg"></div>
+          </div>
+
+          <div class="w-full mt-5 p-4 rounded-2xl bg-nexos-surface border border-nexos-border text-center transition-all">
+            <div class="font-mono text-[10px] uppercase tracking-widest text-nexos-muted mb-1">Resultado de Extracción</div>
+            <h3 id="result-drink-title" class="font-serif text-2xl text-nexos-text mb-1">Listo para calibrar</h3>
+            <p id="result-drink-desc" class="text-xs text-nexos-muted mb-3">Combina los ingredientes a la izquierda y presiona preparar.</p>
+
+            <button type="button" id="add-custom-cup-btn" onclick="addCustomDrinkToOrder()" class="hidden w-full py-2.5 px-4 rounded-xl bg-nexos-gold/20 hover:bg-nexos-gold/30 border border-nexos-gold/50 text-nexos-gold text-xs font-medium transition-all">
+              + Añadir esta taza al pedido
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       4. CATÁLOGO COMPLETO & PANEL DE PEDIDO WHATSAPP ("TU SELECCIÓN")
+       ========================================================================== -->
+  <section id="catalogo" class="py-20 sm:py-24 border-b border-nexos-border reveal">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+        <div>
+          <span class="font-mono text-xs uppercase tracking-widest text-nexos-copper block mb-2">// 02. Carta Oficial Nexos Café</span>
+          <h2 class="font-serif text-4xl sm:text-5xl text-nexos-text">Catálogo Nexos</h2>
+        </div>
+
+        <div class="relative w-full md:w-80">
+          <input
+            type="text"
+            id="menu-search"
+            placeholder="Buscar espresso, moka, chai, frappe, v60..."
+            class="w-full bg-nexos-surface border border-nexos-border focus:border-nexos-copper rounded-xl pl-4 pr-10 py-2.5 text-sm text-nexos-text placeholder:text-nexos-muted outline-none transition-colors"
+          />
+          <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-nexos-muted text-xs">⌕</span>
+        </div>
+      </div>
+
+      <div id="category-tabs" class="flex flex-wrap gap-2 mb-8">
+        <!-- Generadas por JS -->
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+        <div class="lg:col-span-8">
+          <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <!-- Tarjetas generadas dinámicamente -->
+          </div>
+          <div id="menu-empty" class="hidden p-12 rounded-2xl bg-nexos-surface border border-nexos-border text-center">
+            <p class="font-serif text-2xl text-nexos-text mb-1">Sin resultados</p>
+            <p class="text-xs text-nexos-muted mb-4">No encontramos productos con ese término de búsqueda.</p>
+            <button type="button" onclick="resetMenuFilters()" class="text-xs font-mono uppercase tracking-wider text-nexos-copper hover:underline">Ver todo el catálogo</button>
+          </div>
+        </div>
+
+        <aside class="lg:col-span-4 bg-nexos-surface border border-nexos-border rounded-3xl p-6 sticky top-20 shadow-xl">
+          <div class="flex items-center justify-between border-b border-nexos-border pb-4 mb-4">
+            <div>
+              <h3 class="font-serif text-2xl text-nexos-text">Tu Selección</h3>
+              <p class="text-xs text-nexos-muted">Pedido directo al 0412-0744298</p>
+            </div>
+            <span id="sidebar-badge" class="font-mono text-xs px-2.5 py-1 rounded-full bg-nexos-bg border border-nexos-border text-nexos-gold">0 ítems</span>
+          </div>
+
+          <div class="mb-4">
+            <span class="block font-mono text-[10px] uppercase tracking-widest text-nexos-muted mb-1.5">Modalidad de Servicio</span>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" id="mode-local" onclick="setOrderMode('Consumo en el lugar')" class="py-2 px-2.5 rounded-xl text-xs font-medium bg-nexos-copper text-nexos-bg transition-all">
+                Consumo en el lugar
+              </button>
+              <button type="button" id="mode-llevar" onclick="setOrderMode('Para llevar')" class="py-2 px-2.5 rounded-xl text-xs font-medium bg-nexos-bg border border-nexos-border text-nexos-muted hover:text-nexos-text transition-all">
+                Para llevar
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="order-payment-method" class="block font-mono text-[10px] uppercase tracking-widest text-nexos-muted mb-1.5">Método de Pago Preferido</label>
+            <select id="order-payment-method" class="w-full bg-nexos-bg border border-nexos-border focus:border-nexos-copper rounded-xl px-3 py-2.5 text-xs text-nexos-text outline-none">
+              <option value="Zelle">Zelle ($ USD)</option>
+              <option value="Dólar en Efectivo">Dólar en Efectivo ($ USD)</option>
+              <option value="Bs. / Pago Móvil">Bolívares (Bs.) / Pago Móvil</option>
+            </select>
+          </div>
+
+          <div id="cart-items-list" class="space-y-2.5 max-h-60 overflow-y-auto pr-1 mb-4">
+            <!-- Ítems dinámicos -->
+          </div>
+
+          <div class="mb-4">
+            <textarea id="order-notes" rows="2" placeholder="Notas (ej. sin azúcar, licores a escoger, hora de retiro...)" class="w-full bg-nexos-bg border border-nexos-border focus:border-nexos-copper rounded-xl p-3 text-xs text-nexos-text placeholder:text-nexos-muted/60 outline-none resize-none"></textarea>
+          </div>
+
+          <div class="pt-4 border-t border-nexos-border space-y-3">
+            <div class="flex items-baseline justify-between">
+              <span class="font-mono text-xs uppercase text-nexos-muted">Subtotal estimado</span>
+              <span id="cart-total-amount" class="font-serif text-3xl text-nexos-gold">$0.00</span>
+            </div>
+
+            <button type="button" id="whatsapp-submit-btn" onclick="sendWhatsAppOrder()" disabled class="w-full py-3.5 px-4 rounded-xl bg-nexos-copper hover:bg-nexos-copperHover disabled:opacity-40 disabled:cursor-not-allowed text-nexos-bg font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-nexos-copper/15">
+              <span>Enviar pedido por WhatsApp</span>
+              <span>→</span>
+            </button>
+
+            <button type="button" id="clear-cart-btn" onclick="clearCart()" class="hidden w-full py-1.5 text-xs text-nexos-muted hover:text-nexos-text transition-colors">
+              Vaciar selección
+            </button>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       5. PROMOCIONES & COMUNIDAD NEXOS (@cafenexos)
+       ========================================================================== -->
+  <section id="promociones" class="py-16 sm:py-20 border-b border-nexos-border bg-nexos-surface/15 reveal">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+        <div>
+          <span class="font-mono text-xs uppercase tracking-widest text-nexos-copper block mb-2">// Beneficios Especiales</span>
+          <h2 class="font-serif text-4xl sm:text-5xl text-nexos-text">Promociones Nexos Café</h2>
+        </div>
+        <a href="https://instagram.com/cafenexos" target="_blank" rel="noopener noreferrer" class="font-mono text-xs px-4 py-2 rounded-full bg-nexos-surface border border-nexos-border hover:border-nexos-copper text-nexos-gold transition-colors self-start md:self-auto">
+          Instagram · @cafenexos →
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-nexos-surface border border-nexos-border rounded-3xl p-7 hover:border-nexos-copper/50 transition-colors">
+          <span class="font-mono text-xs uppercase tracking-widest text-nexos-copper block mb-2">01 · Mañanas en Mérida</span>
+          <h3 class="font-serif text-3xl text-nexos-text mb-2">Descuento de 10% en cafés</h3>
+          <p class="text-sm text-nexos-muted leading-relaxed">
+            Disfruta de un 10% de descuento en cafés en las mañanas al visitar nuestra barra en la Avenida 5 o consultar tu orden por WhatsApp.
+          </p>
+        </div>
+
+        <div class="bg-nexos-surface border border-nexos-border rounded-3xl p-7 hover:border-nexos-copper/50 transition-colors">
+          <span class="font-mono text-xs uppercase tracking-widest text-nexos-gold block mb-2">02 · Celebra con Nosotros</span>
+          <h3 class="font-serif text-3xl text-nexos-text mb-2">Descuentos para Cumpleañeros</h3>
+          <p class="text-sm text-nexos-muted leading-relaxed">
+            Celebra tu cumpleaños en Nexos y obtendrás un descuento especial en tu consumo. Consulta condiciones vigentes al llegar o escribirnos.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       6. MÉTODOS DE PAGO ACEPTADOS (ZELLE, DÓLAR EN EFECTIVO, BS. / PAGO MÓVIL)
+       ========================================================================== -->
+  <section id="pagos" class="py-20 sm:py-24 border-b border-nexos-border bg-nexos-surface/20 reveal">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+        <div>
+          <span class="font-mono text-xs uppercase tracking-widest text-nexos-copper block mb-2">// 03. Facilidades en Barra & Pedidos</span>
+          <h2 class="font-serif text-4xl sm:text-5xl text-nexos-text">Métodos de Pago Aceptados</h2>
+        </div>
+        <p class="text-sm text-nexos-muted max-w-md">
+          Confirmamos tu pago al instante tanto en nuestra barra de la Avenida 5 como al coordinar tu pedido vía WhatsApp.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-nexos-surface border border-nexos-border rounded-3xl p-7 flex flex-col justify-between hover:border-nexos-copper/50 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="font-mono text-xs uppercase tracking-widest text-nexos-gold">01 · Transferencia USD</span>
+              <span class="w-9 h-9 rounded-xl bg-nexos-bg border border-nexos-border flex items-center justify-center font-serif text-lg text-nexos-copper font-bold">Z</span>
+            </div>
+            <h3 class="font-serif text-2xl text-nexos-text mb-2">Zelle</h3>
+            <p class="text-sm text-nexos-muted leading-relaxed mb-5">
+              Pagos rápidos en dólares sin comisiones locales. Solicita los datos verificados al enviar tu orden por WhatsApp o consúltalos en barra.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-nexos-border flex items-center justify-between text-xs">
+            <span class="font-mono text-nexos-muted">Verificación inmediata</span>
+            <button type="button" onclick="copyToClipboard('Solicitar datos Zelle Nexos Café al 0412-0744298', 'Referencia Zelle copiada')" class="font-mono text-nexos-copper hover:underline">Copiar nota</button>
+          </div>
+        </div>
+
+        <div class="bg-nexos-surface border border-nexos-border rounded-3xl p-7 flex flex-col justify-between hover:border-nexos-copper/50 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="font-mono text-xs uppercase tracking-widest text-nexos-gold">02 · Divisas Físicas</span>
+              <span class="w-9 h-9 rounded-xl bg-nexos-bg border border-nexos-border flex items-center justify-center font-mono text-base text-nexos-copper font-semibold">$</span>
+            </div>
+            <h3 class="font-serif text-2xl text-nexos-text mb-2">Dólar en Efectivo ($ USD)</h3>
+            <p class="text-sm text-nexos-muted leading-relaxed mb-5">
+              Aceptamos billetes en buen estado para consumo en el lugar o retiro en tienda. Contamos con disponibilidad de vuelto según cambio del día.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-nexos-border flex items-center justify-between text-xs">
+            <span class="font-mono text-nexos-muted">En barra · Av. 5 Mérida</span>
+            <span class="font-mono text-nexos-gold">Sin recargos</span>
+          </div>
+        </div>
+
+        <div class="bg-nexos-surface border border-nexos-border rounded-3xl p-7 flex flex-col justify-between hover:border-nexos-copper/50 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="font-mono text-xs uppercase tracking-widest text-nexos-gold">03 · Moneda Nacional</span>
+              <span class="w-9 h-9 rounded-xl bg-nexos-bg border border-nexos-border flex items-center justify-center font-mono text-xs text-nexos-copper font-semibold">Bs.</span>
+            </div>
+            <h3 class="font-serif text-2xl text-nexos-text mb-2">Bolívares (Bs.) / Pago Móvil</h3>
+            <p class="text-sm text-nexos-muted leading-relaxed mb-5">
+              Pago Móvil interbancario instantáneo calculado a la tasa oficial vigente del día. Envía el comprobante directamente a nuestro WhatsApp.
+            </p>
+          </div>
+          <div class="pt-4 border-t border-nexos-border flex items-center justify-between text-xs">
+            <span class="font-mono text-nexos-muted">Tel: 0412-0744298</span>
+            <button type="button" onclick="copyToClipboard('0412-0744298', 'Teléfono Pago Móvil copiado')" class="font-mono text-nexos-copper hover:underline">Copiar teléfono</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       7. UBICACIÓN Y PIE DE PÁGINA CON ENLACES LEGALES COMPLETOS
+       ========================================================================== -->
+  <footer class="bg-nexos-bg py-14 px-4 sm:px-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 pb-10 border-b border-nexos-border">
+      <div>
+        <div class="font-serif text-2xl tracking-wider uppercase font-semibold text-nexos-text mb-2">Nexos Café</div>
+        <p class="text-xs text-nexos-muted leading-relaxed">
+          Entre calles 16 y 17, Avenida 5, Mérida 5115, Estado Mérida, Venezuela.<br>
+          Plus Code: <span class="font-mono text-nexos-text">HVX6+V6 Mérida</span> · Teléfono: <span class="font-mono text-nexos-text">0412-0744298</span><br>
+          Instagram: <span class="font-mono text-nexos-text">@cafenexos</span>
+        </p>
+      </div>
+
+      <div>
+        <div class="font-mono text-xs uppercase tracking-widest text-nexos-gold mb-3">Horario & Servicio</div>
+        <ul class="text-xs text-nexos-muted space-y-1.5">
+          <li>• Apertura diaria desde las <strong class="text-nexos-text font-medium">8:30 a.m.</strong></li>
+          <li>• Modalidades: <strong class="text-nexos-text font-medium">Consumo en el lugar</strong> y <strong class="text-nexos-text font-medium">Para llevar</strong></li>
+          <li>• Calificación Google: <strong class="text-nexos-gold font-medium">★ 4.8 (64 opiniones)</strong> · Rango $1–$5</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="font-mono text-xs uppercase tracking-widest text-nexos-gold mb-3">Documentación & Seguridad</div>
+        <div class="flex flex-col items-start gap-2 text-xs text-nexos-muted">
+          <button type="button" onclick="openLegalModal('seguridad')" class="hover:text-nexos-copper transition-colors">→ Políticas de Seguridad e Higiene</button>
+          <button type="button" onclick="openLegalModal('privacidad')" class="hover:text-nexos-copper transition-colors">→ Política de Privacidad</button>
+          <button type="button" onclick="openLegalModal('cookies')" class="hover:text-nexos-copper transition-colors">→ Política de Cookies</button>
+          <button type="button" onclick="openLegalModal('terminos')" class="hover:text-nexos-copper transition-colors">→ Términos y Condiciones</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] font-mono text-nexos-muted/75">
+      <span>© 2026 Nexos Café Mérida. Todos los derechos reservados.</span>
+      <div class="flex items-center gap-4">
+        <button type="button" onclick="showCookieBanner()" class="hover:text-nexos-copper underline">Configurar Cookies</button>
+        <span>Av. 5 · Mérida 5115</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       8. BANNER DE CONSENTIMIENTO DE COOKIES
+       ========================================================================== -->
+  <div id="cookie-banner" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:max-w-md z-50 bg-nexos-surface border border-nexos-border rounded-2xl p-5 shadow-2xl transition-all duration-300">
+    <div class="flex items-start justify-between gap-3 mb-2">
+      <span class="font-mono text-[10px] uppercase tracking-widest text-nexos-copper">Privacidad & Cookies · Nexos Café</span>
+      <button type="button" onclick="dismissCookieBanner('esenciales')" class="text-nexos-muted hover:text-nexos-text text-xs">✕</button>
+    </div>
+    <p class="text-xs text-nexos-muted leading-relaxed mb-4">
+      Utilizamos cookies técnicas esenciales para recordar tu selección del catálogo y tu taza personalizada en el Laboratorio Barista. Puedes revisar nuestra <button type="button" onclick="openLegalModal('cookies')" class="text-nexos-gold underline">Política de Cookies</button>.
+    </p>
+    <div class="flex flex-wrap items-center gap-2">
+      <button type="button" onclick="dismissCookieBanner('todas')" class="flex-1 py-2 px-3 rounded-xl bg-nexos-copper hover:bg-nexos-copperHover text-nexos-bg font-semibold text-xs transition-colors">
+        Aceptar todas
+      </button>
+      <button type="button" onclick="dismissCookieBanner('esenciales')" class="py-2 px-3 rounded-xl bg-nexos-bg hover:bg-nexos-surfaceHover border border-nexos-border text-nexos-text text-xs font-medium transition-colors">
+        Solo esenciales
+      </button>
+      <button type="button" onclick="openLegalModal('cookies')" class="py-2 px-2.5 rounded-xl text-nexos-muted hover:text-nexos-text text-xs">
+        Configurar
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       9. MODAL LEGAL COMPLETO
+       ========================================================================== -->
+  <div id="legal-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-nexos-surface border border-nexos-border rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-6 border-b border-nexos-border flex items-center justify-between">
+        <div>
+          <span class="font-mono text-[10px] uppercase tracking-widest text-nexos-copper block">Marco Normativo · Nexos Café Mérida</span>
+          <h3 id="legal-modal-title" class="font-serif text-2xl sm:text-3xl text-nexos-text">Políticas de Seguridad</h3>
+        </div>
+        <button type="button" onclick="closeLegalModal()" class="w-9 h-9 rounded-xl bg-nexos-bg border border-nexos-border text-nexos-muted hover:text-nexos-text flex items-center justify-center">✕</button>
+      </div>
+
+      <div class="px-6 py-3 bg-nexos-bg/60 border-b border-nexos-border flex flex-wrap gap-2 text-xs">
+        <button type="button" onclick="openLegalModal('seguridad')" class="legal-tab px-3 py-1.5 rounded-lg border border-nexos-border transition-colors" data-doc="seguridad">Seguridad e Higiene</button>
+        <button type="button" onclick="openLegalModal('privacidad')" class="legal-tab px-3 py-1.5 rounded-lg border border-nexos-border transition-colors" data-doc="privacidad">Privacidad</button>
+        <button type="button" onclick="openLegalModal('cookies')" class="legal-tab px-3 py-1.5 rounded-lg border border-nexos-border transition-colors" data-doc="cookies">Cookies</button>
+        <button type="button" onclick="openLegalModal('terminos')" class="legal-tab px-3 py-1.5 rounded-lg border border-nexos-border transition-colors" data-doc="terminos">Términos y Condiciones</button>
+      </div>
+
+      <div id="legal-modal-body" class="p-6 overflow-y-auto text-sm text-nexos-muted leading-relaxed space-y-4">
+        <!-- Contenido dinámico -->
+      </div>
+
+      <div class="p-4 border-t border-nexos-border bg-nexos-bg/60 flex justify-end">
+        <button type="button" onclick="closeLegalModal()" class="px-5 py-2 rounded-xl bg-nexos-copper hover:bg-nexos-copperHover text-nexos-bg text-xs font-semibold">Cerrar documento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT: CATÁLOGO COMPLETO, LABORATORIO BARISTA, WHATSAPP Y LEGALES
+       ========================================================================== -->
+  <script>
+    const menuItems = [
+      // --- CAFÉS CLÁSICOS DE MÁQUINA ---
+      {
+        id: 'cls-espresso',
+        name: 'Espresso',
+        category: 'Cafés Clásicos',
+        desc: 'Extracción pura del café recién molido.',
+        image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 1.50 }]
+      },
+      {
+        id: 'cls-ristretto',
+        name: 'Ristretto',
+        category: 'Cafés Clásicos',
+        desc: 'Espresso corto y más intenso (menos agua).',
+        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Corto', price: 1.50 }]
+      },
+      {
+        id: 'cls-lungo',
+        name: 'Lungo',
+        category: 'Cafés Clásicos',
+        desc: 'Espresso largo y menos intenso (más agua).',
+        image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Largo', price: 1.50 }]
+      },
+      {
+        id: 'cls-doppio',
+        name: 'Doppio',
+        category: 'Cafés Clásicos',
+        desc: 'Doble espresso (ristretto, perfecto o lungo).',
+        image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Doble', price: 1.70 }]
+      },
+      {
+        id: 'cls-macchiato',
+        name: 'Café Macchiato',
+        category: 'Cafés Clásicos',
+        desc: 'Espresso + leche texturizada (sobre el espresso).',
+        image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 1.80 }]
+      },
+      {
+        id: 'cls-cortado',
+        name: 'Café Cortado',
+        category: 'Cafés Clásicos',
+        desc: 'Espresso + poca leche texturizada (vertida en el espresso).',
+        image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 1.80 }]
+      },
+      {
+        id: 'cls-americano',
+        name: 'Americano',
+        category: 'Cafés Clásicos',
+        desc: 'Doble Espresso + Agua caliente.',
+        image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Doble', price: 1.80 }]
+      },
+      {
+        id: 'cls-cappuccino',
+        name: 'Cappuccino',
+        category: 'Cafés Clásicos',
+        desc: 'Espresso + Leche texturizada (Café intenso en sabor).',
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: 'Tamaño A', price: 2.00 },
+          { label: 'Tamaño B', price: 2.50 }
+        ]
+      },
+      {
+        id: 'cls-latte',
+        name: 'Café Latte',
+        category: 'Cafés Clásicos',
+        desc: 'Espresso + leche texturizada (Café más suave que el cappuccino).',
+        image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: 'Tamaño A', price: 2.00 },
+          { label: 'Tamaño B', price: 2.50 }
+        ]
+      },
+      {
+        id: 'cls-latte-macchiato',
+        name: 'Latte Macchiato',
+        category: 'Cafés Clásicos',
+        desc: 'Leche texturizada y medio espresso (café sumamente suave).',
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.50 }]
+      },
+
+      // --- FILTRADOS ---
+      {
+        id: 'flt-v60',
+        name: 'Servicio de V60',
+        category: 'Filtrados',
+        desc: 'Extracción manual en método filtrado V60.',
+        image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar precio en barra/WA', price: null }]
+      },
+      {
+        id: 'flt-prensa',
+        name: 'Servicio de Prensa Francesa',
+        category: 'Filtrados',
+        desc: 'Infusión por inmersión con cuerpo marcado en Prensa Francesa.',
+        image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar precio en barra/WA', price: null }]
+      },
+      {
+        id: 'flt-aeropress',
+        name: 'Servicio de Aeropress',
+        category: 'Filtrados',
+        desc: 'Extracción limpia y versátil preparada en Aeropress.',
+        image: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar precio en barra/WA', price: null }]
+      },
+      {
+        id: 'flt-moka',
+        name: 'Servicio de Moka Italiana (Greca)',
+        category: 'Filtrados',
+        desc: 'Preparación tradicional en cafetera Moka Italiana.',
+        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar precio en barra/WA', price: null }]
+      },
+      {
+        id: 'flt-colao',
+        name: 'Servicio de Café "Colao"',
+        category: 'Filtrados',
+        desc: 'Preparación tradicional de café colado al estilo local.',
+        image: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar precio en barra/WA', price: null }]
+      },
+
+      // --- CAFÉS ESPECIALES ---
+      {
+        id: 'esp-28grados',
+        name: 'Espresso 28 grados',
+        category: 'Cafés Especiales',
+        desc: 'Doble Espresso + licor de café.',
+        image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 1.80 }]
+      },
+      {
+        id: 'esp-americano-especiado',
+        name: 'Americano Especiado',
+        category: 'Cafés Especiales',
+        desc: 'Espresso + Agua Caliente + Cardamomo y Canela.',
+        image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.00 }]
+      },
+      {
+        id: 'esp-americano-envenenado',
+        name: 'Americano envenenado',
+        category: 'Cafés Especiales',
+        desc: 'Espresso + Agua Caliente + licor de café.',
+        image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.00 }]
+      },
+      {
+        id: 'esp-americano-honey',
+        name: 'Americano Honey',
+        category: 'Cafés Especiales',
+        desc: 'Espresso + Miel + Agua Caliente.',
+        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.00 }]
+      },
+      {
+        id: 'esp-extra-grande',
+        name: 'Café Extra Extra Grande',
+        category: 'Cafés Especiales',
+        desc: 'Medio litro o 17 oz de café Cappuccino.',
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: '17 oz / 500 ml', price: 4.00 }]
+      },
+      {
+        id: 'esp-latte-vainilla',
+        name: 'Latte Vainilla',
+        category: 'Cafés Especiales',
+        desc: 'Café latte + jarabe de vainilla.',
+        image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.80 }]
+      },
+      {
+        id: 'esp-latte-dulce-leche',
+        name: 'Latte Dulce de Leche',
+        category: 'Cafés Especiales',
+        desc: 'Café latte + dulce de leche.',
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 3.00 }]
+      },
+      {
+        id: 'esp-latte-honey',
+        name: 'Latte Honey',
+        category: 'Cafés Especiales',
+        desc: 'Espresso + Miel + Leche Texturizada.',
+        image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 3.00 }]
+      },
+      {
+        id: 'esp-latte-cinnamon',
+        name: 'Latte Cinnamon',
+        category: 'Cafés Especiales',
+        desc: 'Café latte + miel + canela.',
+        image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 3.00 }]
+      },
+      {
+        id: 'esp-latte-amaretto',
+        name: 'Latte Amaretto',
+        category: 'Cafés Especiales',
+        desc: 'Café Latte + jarabe de amaretto.',
+        image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 3.00 }]
+      },
+      {
+        id: 'esp-latte-ponche',
+        name: 'Latte Ponche Crema',
+        category: 'Cafés Especiales',
+        desc: 'Café Latte + ponche crema.',
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 3.00 }]
+      },
+      {
+        id: 'esp-golden-latte',
+        name: 'Golden Latte',
+        category: 'Cafés Especiales',
+        desc: 'Espresso + jengibre + cúrcuma + leche texturizada.',
+        image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.80 }]
+      },
+      {
+        id: 'esp-cap-americano',
+        name: 'Cappuccino Americano',
+        category: 'Cafés Especiales',
+        desc: 'Café cappuccino + crema chantilly + cacao en polvo o canela (a escoger).',
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Con Chantilly', price: 3.50 }]
+      },
+      {
+        id: 'esp-latte-chocomani',
+        name: 'Latte Choco-Maní',
+        category: 'Cafés Especiales',
+        desc: 'Café latte + crema de chocolate con maní (producto local).',
+        image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Producto local', price: 3.50 }]
+      },
+      {
+        id: 'esp-moka',
+        name: 'Café Moka',
+        category: 'Cafés Especiales',
+        desc: 'Doble espresso corto + sirope de chocolate + leche texturizada.',
+        image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 3.00 }]
+      },
+      {
+        id: 'esp-moka-menta',
+        name: 'Café Moka Menta',
+        category: 'Cafés Especiales',
+        desc: 'Doble Espresso corto + sirope de chocolate + menta + leche texturizada.',
+        image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Menta', price: 3.50 }]
+      },
+      {
+        id: 'esp-moka-nutella',
+        name: 'Café Moka Nutella',
+        category: 'Cafés Especiales',
+        desc: 'Café Moka con base de nutella.',
+        image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Con Nutella', price: 3.50 }]
+      },
+      {
+        id: 'esp-moka-masala',
+        name: 'Café Moka Masala',
+        category: 'Cafés Especiales',
+        desc: 'Doble Espresso corto + chocolate especiado (jengibre, pimienta negra, cardamomo y sarrapia).',
+        image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Especiado', price: 4.00 }]
+      },
+      {
+        id: 'esp-moka-americano',
+        name: 'Moka Americano',
+        category: 'Cafés Especiales',
+        desc: 'Café Moka + chantilly.',
+        image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Con Chantilly', price: 4.50 }]
+      },
+      {
+        id: 'esp-ginger-miel',
+        name: 'Espresso Ginger Miel',
+        category: 'Cafés Especiales',
+        desc: 'Doble espresso + miel + jengibre.',
+        image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Doble', price: 2.50 }]
+      },
+      {
+        id: 'esp-miel-macchiato',
+        name: 'Café Miel estilo Macchiato',
+        category: 'Cafés Especiales',
+        desc: 'Doble espresso + miel + leche texturizada (sobre el espresso).',
+        image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.80 }]
+      },
+      {
+        id: 'esp-bombon-clasico',
+        name: 'Café Bombón Clásico',
+        category: 'Cafés Especiales',
+        desc: 'Leche condensada + espresso.',
+        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Clásico', price: 2.20 }]
+      },
+      {
+        id: 'esp-bombon-macchiato',
+        name: 'Café Bombón Macchiato',
+        category: 'Cafés Especiales',
+        desc: 'Leche condensada + espresso + dos cucharadas de leche texturizada.',
+        image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Macchiato', price: 2.80 }]
+      },
+      {
+        id: 'esp-bombon-especial',
+        name: 'Café Bombón Especial',
+        category: 'Cafés Especiales',
+        desc: 'Leche condensada + doble espresso + leche texturizada + ralladura de limón.',
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Especial', price: 3.50 }]
+      },
+      {
+        id: 'esp-bombon-envenenado',
+        name: 'Café Bombón Envenenado',
+        category: 'Cafés Especiales',
+        desc: 'Ponche Crema + doble espresso + leche texturizada.',
+        image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Con Ponche Crema', price: 4.00 }]
+      },
+      {
+        id: 'esp-irlandes',
+        name: 'Café Irlandés',
+        category: 'Cafés Especiales',
+        desc: 'Espresso + agua caliente + azúcar + licor de whiskey + crema chantilly.',
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Caliente', price: 4.00 }]
+      },
+      {
+        id: 'esp-carajillo',
+        name: 'Café Carajillo',
+        category: 'Cafés Especiales',
+        desc: 'Americano dulce + ron + zumo de limón.',
+        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Caliente', price: 3.50 }]
+      },
+
+      // --- BEBIDAS CALIENTES ---
+      {
+        id: 'cal-choc',
+        name: 'Chocolate Caliente',
+        category: 'Bebidas Calientes',
+        desc: 'Bebida caliente tradicional de chocolate.',
+        image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 3.50 }]
+      },
+      {
+        id: 'cal-choc-envenenado',
+        name: 'Chocolate "envenenado"',
+        category: 'Bebidas Calientes',
+        desc: 'Chocolate caliente con toque licorado de la casa.',
+        image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Especial', price: 4.00 }]
+      },
+      {
+        id: 'cal-choc-cafe',
+        name: 'Chocolate Caliente con café',
+        category: 'Bebidas Calientes',
+        desc: 'Combinación de chocolate caliente y café.',
+        image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Con café', price: 4.00 }]
+      },
+      {
+        id: 'cal-choc-menta',
+        name: 'Chocolate con Menta',
+        category: 'Bebidas Calientes',
+        desc: 'Chocolate caliente infusionado con menta.',
+        image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Menta', price: 4.00 }]
+      },
+      {
+        id: 'cal-choc-cardamomo',
+        name: 'Chocolate con Cardamomo',
+        category: 'Bebidas Calientes',
+        desc: 'Chocolate caliente aromatizado con cardamomo.',
+        image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Cardamomo', price: 4.00 }]
+      },
+      {
+        id: 'cal-chai-orig',
+        name: 'Chai original',
+        category: 'Bebidas Calientes',
+        desc: 'Té negro, cardamomo, jengibre, clavito, pimienta, anís estrellado, canela y semillas de hinojo y cilantro.',
+        image: 'https://images.unsplash.com/photo-1561336313-0bd5e0b27ec8?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Original', price: 2.50 }]
+      },
+      {
+        id: 'cal-chai-ginger',
+        name: 'Chai Ginger',
+        category: 'Bebidas Calientes',
+        desc: 'Té negro, cardamomo, jengibre, clavito, pimienta, anís estrellado, y semillas de hinojo y cilantro (no lleva canela).',
+        image: 'https://images.unsplash.com/photo-1561336313-0bd5e0b27ec8?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Sin canela', price: 2.50 }]
+      },
+      {
+        id: 'cal-chai-vainilla',
+        name: 'Chai Vainilla',
+        category: 'Bebidas Calientes',
+        desc: 'Té negro, cardamomo, clavito, anís estrellado, canela, nuez moscada, pimienta y sarrapia.',
+        image: 'https://images.unsplash.com/photo-1561336313-0bd5e0b27ec8?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Vainilla', price: 2.50 }]
+      },
+      {
+        id: 'cal-merida-floral',
+        name: 'Infusión Mérida Floral',
+        category: 'Bebidas Calientes',
+        desc: 'Manzanilla, pétalos de rosa, de caléndula y un toque de canela.',
+        image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Infusión', price: 2.50 }]
+      },
+      {
+        id: 'cal-fusion-verde',
+        name: 'Fusión Verde',
+        category: 'Bebidas Calientes',
+        desc: 'Té verde, jengibre, yerbabuena, y limón.',
+        image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Caliente', price: 2.50 }]
+      },
+      {
+        id: 'cal-jamaica',
+        name: 'Infusión Flor de Jamaica',
+        category: 'Bebidas Calientes',
+        desc: 'Infusión natural de Flor de Jamaica (limón opcional).',
+        image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Limón opcional', price: 2.00 }]
+      },
+      {
+        id: 'cal-te-negro',
+        name: 'Té negro',
+        category: 'Bebidas Calientes',
+        desc: 'Infusión clásica de té negro.',
+        image: 'https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.00 }]
+      },
+      {
+        id: 'cal-te-verde',
+        name: 'Té verde',
+        category: 'Bebidas Calientes',
+        desc: 'Infusión clásica de té verde.',
+        image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.00 }]
+      },
+      {
+        id: 'cal-matcha',
+        name: 'Té Matcha',
+        category: 'Bebidas Calientes',
+        desc: 'Té verde matcha preparado al estilo tradicional.',
+        image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.50 }]
+      },
+      {
+        id: 'cal-latte-matcha',
+        name: 'Latte Matcha',
+        category: 'Bebidas Calientes',
+        desc: 'Matcha combinado con leche.',
+        image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Con leche', price: 3.00 }]
+      },
+      {
+        id: 'cal-tisana-chai',
+        name: 'Tisana Chai de Hierbas',
+        category: 'Bebidas Calientes',
+        desc: 'Manzanilla, cardamomo, jengibre, clavito, pimienta, anís estrellado, canela, semillas de hinojo y cilantro.',
+        image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Tisana', price: 2.50 }]
+      },
+      {
+        id: 'cal-tisana-spicata',
+        name: 'Tisana Flor Spicata',
+        category: 'Bebidas Calientes',
+        desc: 'Flor de jamaica, jengibre, limón, y yerbabuena.',
+        image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Tisana', price: 2.50 }]
+      },
+      {
+        id: 'cal-te-blanco',
+        name: 'Té Blanco (Pai Mu Tan)',
+        category: 'Bebidas Calientes',
+        desc: 'Pai Mu Tan: Té blanco chino de la provincia de Fuijian, aroma frutal, sabor sutil y dulce.',
+        image: 'https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Pai Mu Tan', price: 2.50 }]
+      },
+      {
+        id: 'cal-oolong',
+        name: 'Oolong (Té azul)',
+        category: 'Bebidas Calientes',
+        desc: 'Milk Oolong: Té chino de la provincia de Fujian, aroma frutal, sabor dulce.',
+        image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cda9?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Milk Oolong', price: 2.50 }]
+      },
+
+      // --- CAFÉS Y BEBIDAS FRÍAS ---
+      {
+        id: 'fria-aerocano',
+        name: 'Aerocano',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Espresso + hielos texturizados para airear la bebida y lograr una sensación de cuerpo.',
+        image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.50 }]
+      },
+      {
+        id: 'fria-aerocano-limon',
+        name: 'Aerocano con limón',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Aerocano + limón.',
+        image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Con limón', price: 2.20 }]
+      },
+      {
+        id: 'fria-iced-coffee',
+        name: 'Iced Coffee',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Espresso cocteleado + hielos de café + leche fría + azúcar.',
+        image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: 'Clásico', price: 3.00 },
+          { label: 'Con Chantilly', price: 4.00 }
+        ]
+      },
+      {
+        id: 'fria-iced-latte-matcha',
+        name: 'Iced Latte Matcha',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Matcha + leche fría + hielo.',
+        image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Frío', price: 3.00 }]
+      },
+      {
+        id: 'fria-iced-espresso-matcha',
+        name: 'Iced Espresso Matcha',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Espresso + matcha + leche fría + hielos de café (azúcar opcional).',
+        image: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Azúcar opcional', price: 3.50 }]
+      },
+      {
+        id: 'fria-nutella-iced',
+        name: 'Nutella Iced Coffee',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Iced coffee con base de Nutella.',
+        image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Base Nutella', price: 4.00 }]
+      },
+      {
+        id: 'fria-affogato',
+        name: 'Café Affogato',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Porción de helado + Espresso.',
+        image: 'https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Helado + Espresso', price: 3.50 }]
+      },
+      {
+        id: 'fria-latte-frappe',
+        name: 'Latte Frappe',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Espresso + helado + leche + hielo (helado de decoración). Chantilly solo para el de 500ml.',
+        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: '300 ml', price: 4.00 },
+          { label: '500 ml (+ Chantilly)', price: 6.00 }
+        ]
+      },
+      {
+        id: 'fria-frappe-oreo',
+        name: 'Latte Frappe Oreo',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Latte frappe acompañado de galletas oreo y chocolate.',
+        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: '300 ml', price: 5.00 },
+          { label: '500 ml', price: 7.00 }
+        ]
+      },
+      {
+        id: 'fria-frappe-licores',
+        name: 'Latte Frappe con licores a escoger',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Opciones de licor a escoger: Licor de Café, Ron, Whiskey o Brandy.',
+        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: '300 ml', price: 4.50 },
+          { label: '500 ml', price: 6.50 }
+        ]
+      },
+      {
+        id: 'fria-frappe-vainilla',
+        name: 'Latte Frappe de Vainilla',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Latte frappe acompañado de jarabe de vainilla.',
+        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: '300 ml', price: 4.50 },
+          { label: '500 ml', price: 6.50 }
+        ]
+      },
+      {
+        id: 'fria-irlandes',
+        name: 'Café Irlandés Frío',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Espresso Cocteleado + agua fría + hielos de café + licor de whiskey + azúcar + crema chantilly.',
+        image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Frío', price: 4.50 }]
+      },
+      {
+        id: 'fria-carajillo',
+        name: 'Café Carajillo Frío',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Espresso cocteleado + agua fría + hielos de café + ron + zumo de limón + azúcar.',
+        image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Frío', price: 3.50 }]
+      },
+      {
+        id: 'fria-batidos',
+        name: 'Batidos de Fruta',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Batido natural preparado con fruta.',
+        image: 'https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Estándar', price: 2.50 }]
+      },
+      {
+        id: 'fria-merengada-frutas',
+        name: 'Merengada de frutas',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Merengada cremosa de frutas.',
+        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: '300 ml', price: 4.00 },
+          { label: '500 ml', price: 6.00 }
+        ]
+      },
+      {
+        id: 'fria-merengada-oreo',
+        name: 'Merengada Oreo',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Merengada con galletas Oreo.',
+        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: '300 ml', price: 4.50 },
+          { label: '500 ml', price: 6.50 }
+        ]
+      },
+      {
+        id: 'fria-merengada-brownie',
+        name: 'Merengada Brownie',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Merengada con brownie.',
+        image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: '300 ml', price: 5.00 },
+          { label: '500 ml', price: 7.00 }
+        ]
+      },
+      {
+        id: 'fria-tes-infusiones',
+        name: 'Tés Fríos e infusiones',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Té negro frío con Limón, Té verde Frío con Limón, Infusión Flor de Jamaica fría con Limón o con Canela y limón.',
+        image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Frío', price: 2.70 }]
+      },
+      {
+        id: 'fria-rosa-negra',
+        name: 'Rosa negra',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Té negro, jamaica, guayabita, pimienta negra y sarrapia.',
+        image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Fría', price: 2.70 }]
+      },
+      {
+        id: 'fria-fusion-verde',
+        name: 'Fusión Verde Fría',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Té verde, jengibre, yerbabuena, y limón.',
+        image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Fría', price: 2.70 }]
+      },
+      {
+        id: 'fria-tisana-spicata',
+        name: 'Tisana Fría Flor Spicata',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Flor de jamaica, jengibre, limón y yerbabuena.',
+        image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Fría', price: 2.70 }]
+      },
+      {
+        id: 'fria-tes-chais',
+        name: 'Tés Chais Fríos',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Variedad de chai servido frío.',
+        image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Frío', price: 2.70 }]
+      },
+      {
+        id: 'fria-agua-mineral',
+        name: 'Agua Mineral',
+        category: 'Cafés y Bebidas Frías',
+        desc: 'Agua mineral refrescante.',
+        image: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: 'Presentación A', price: 1.30 },
+          { label: 'Presentación B', price: 1.80 }
+        ]
+      },
+
+      // --- POSTRES, SALADOS Y CAFÉ EN GRANO/MOLIDO ---
+      {
+        id: 'ext-postres',
+        name: 'Postres y tortas',
+        category: 'Postres, Salados y Grano',
+        desc: 'Opciones dulces y tortas artesanales de la carta Nexos.',
+        image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar disponibilidad/precio', price: null }]
+      },
+      {
+        id: 'ext-postres-frios',
+        name: 'Tortas y postres fríos',
+        category: 'Postres, Salados y Grano',
+        desc: 'Alternativas frías de repostería.',
+        image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar disponibilidad/precio', price: null }]
+      },
+      {
+        id: 'ext-galletas',
+        name: 'Galletas',
+        category: 'Postres, Salados y Grano',
+        desc: 'Galletas recién horneadas para acompañar tu café.',
+        image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar disponibilidad/precio', price: null }]
+      },
+      {
+        id: 'ext-pizzas',
+        name: 'Pizzas',
+        category: 'Postres, Salados y Grano',
+        desc: 'Alternativa salada de la casa.',
+        image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar disponibilidad/precio', price: null }]
+      },
+      {
+        id: 'ext-tequenos',
+        name: 'Tequeños',
+        category: 'Postres, Salados y Grano',
+        desc: 'Pasapalo salado clásico.',
+        image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar disponibilidad/precio', price: null }]
+      },
+      {
+        id: 'ext-medialunas',
+        name: 'Media Lunas rellenas',
+        category: 'Postres, Salados y Grano',
+        desc: 'Media lunas rellenas para acompañar.',
+        image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar disponibilidad/precio', price: null }]
+      },
+      {
+        id: 'ext-desayunos',
+        name: 'Desayunos',
+        category: 'Postres, Salados y Grano',
+        desc: 'Opciones de desayuno desde las 8:30 a.m.',
+        image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=600&q=80',
+        variants: [{ label: 'Consultar disponibilidad/precio', price: null }]
+      },
+      {
+        id: 'ext-grano-molido',
+        name: 'Café Nexos Molido / en Grano',
+        category: 'Postres, Salados y Grano',
+        desc: 'Presentaciones disponibles: 250 g, 500 g y 1 Kg (Café Molido o Café en Grano).',
+        image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80',
+        variants: [
+          { label: '250 g (Consultar precio)', price: null },
+          { label: '500 g (Consultar precio)', price: null },
+          { label: '1 Kg (Consultar precio)', price: null }
+        ]
+      }
+    ];
+
+    const categories = [
+      'Todos',
+      'Cafés Clásicos',
+      'Cafés Especiales',
+      'Filtrados',
+      'Bebidas Calientes',
+      'Cafés y Bebidas Frías',
+      'Postres, Salados y Grano'
+    ];
+
+    let activeCategory = 'Todos';
+    let searchQuery = '';
+    let cart = [];
+    let orderMode = 'Consumo en el lugar';
+
+    /* --------------------------------------------------------------------------
+       LABORATORIO BARISTA
+       -------------------------------------------------------------------------- */
+    const selectedIngredients = new Set();
+    let isBrewing = false;
+    let lastCustomDrink = null;
+
+    const clientNameInput = document.getElementById('client-name-input');
+    const cupClientLabel = document.getElementById('cup-client-label');
+
+    clientNameInput.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      cupClientLabel.textContent = val || 'Tu Nombre';
+    });
+
+    function toggleIngredient(key) {
+      if (isBrewing) return;
+      const btn = document.getElementById(`ing-${key}`);
+      const badge = btn.querySelector('.ing-status');
+
+      if (selectedIngredients.has(key)) {
+        selectedIngredients.delete(key);
+        btn.classList.remove('border-nexos-copper', 'bg-nexos-copper/10');
+        btn.classList.add('border-nexos-border', 'bg-nexos-bg');
+        badge.textContent = '+ Añadir';
+        badge.classList.remove('bg-nexos-copper', 'text-nexos-bg');
+        badge.classList.add('bg-nexos-surface', 'text-nexos-muted');
+      } else {
+        selectedIngredients.add(key);
+        btn.classList.remove('border-nexos-border', 'bg-nexos-bg');
+        btn.classList.add('border-nexos-copper', 'bg-nexos-copper/10');
+        badge.textContent = '✓ Listo';
+        badge.classList.remove('bg-nexos-surface', 'text-nexos-muted');
+        badge.classList.add('bg-nexos-copper', 'text-nexos-bg');
+      }
+
+      document.getElementById('selected-count-label').textContent = `${selectedIngredients.size} seleccionados`;
+    }
+
+    function evaluateRecipe(ings) {
+      const hasCafe = ings.has('cafe');
+      const hasAgua = ings.has('agua');
+      const hasLeche = ings.has('leche');
+      const hasHielo = ings.has('hielo');
+      const hasCacao = ings.has('cacao');
+
+      if (!hasCafe && hasLeche && hasCacao) {
+        return {
+          name: hasHielo ? 'Chocolatada Fría Nexos' : 'Chocolate Caliente con Cacao',
+          desc: 'Cacao merideño emulsionado con leche cremada.',
+          color: '#5C3317',
+          fillHeight: '78%',
+          price: 3.50
+        };
+      }
+      if (!hasCafe) {
+        return {
+          name: hasHielo ? 'Agua Fría & Aromáticas' : 'Infusión Termal de la Casa',
+          desc: 'Preparación ligera sin carga de espresso.',
+          color: '#6BA3BE',
+          fillHeight: '65%',
+          price: 2.00
+        };
+      }
+      if (hasCafe && hasLeche && hasHielo && hasCacao) {
+        return {
+          name: 'Iced Moka Nexos',
+          desc: 'Espresso sobre hielo con cacao, canela y leche fría.',
+          color: '#6F432A',
+          fillHeight: '85%',
+          price: 3.50
+        };
+      }
+      if (hasCafe && hasLeche && hasHielo) {
+        return {
+          name: 'Iced Coffee Calibrado',
+          desc: 'Extracción de 28s vertida sobre hielo y leche cremada.',
+          color: '#A67B5B',
+          fillHeight: '82%',
+          price: 3.00
+        };
+      }
+      if (hasCafe && hasLeche && hasCacao) {
+        return {
+          name: 'Café Moka Nexos',
+          desc: 'Espresso intenso con cacao, leche texturizada y canela.',
+          color: '#5E3722',
+          fillHeight: '80%',
+          price: 3.00
+        };
+      }
+      if (hasCafe && hasLeche) {
+        return {
+          name: 'Café Latte / Cappuccino Nexos',
+          desc: 'Carga de espresso equilibrada con leche texturizada.',
+          color: '#B58963',
+          fillHeight: '80%',
+          price: 2.50
+        };
+      }
+      if (hasCafe && hasAgua && hasHielo) {
+        return {
+          name: 'Aerocano',
+          desc: 'Espresso enfriado y aireado con agua purificada y hielo.',
+          color: '#3B1E10',
+          fillHeight: '75%',
+          price: 2.50
+        };
+      }
+      if (hasCafe && hasAgua) {
+        return {
+          name: 'Americano',
+          desc: 'Doble espresso con agua caliente a 93°C.',
+          color: '#3E2012',
+          fillHeight: '72%',
+          price: 1.80
+        };
+      }
+      return {
+        name: hasCacao ? 'Espresso Especiado con Cacao' : 'Espresso',
+        desc: 'Extracción pura a 9 BAR en 28 segundos.',
+        color: '#2E1509',
+        fillHeight: '45%',
+        price: 1.50
+      };
+    }
+
+    function startBrewing() {
+      if (isBrewing) return;
+      if (selectedIngredients.size === 0) {
+        showToast('Selecciona al menos un ingrediente (ej. Granos de Café)');
+        return;
+      }
+
+      isBrewing = true;
+      const clientName = clientNameInput.value.trim() || 'Invitado';
+      cupClientLabel.textContent = clientName;
+
+      const stage = document.getElementById('machine-stage');
+      const statusPill = document.getElementById('machine-status-pill');
+      const led1 = document.getElementById('led-1');
+      const led2 = document.getElementById('led-2');
+      const liquidFill = document.getElementById('cup-liquid-fill');
+      const addCustomBtn = document.getElementById('add-custom-cup-btn');
+
+      stage.classList.remove('cup-ready');
+      addCustomBtn.classList.add('hidden');
+      liquidFill.style.height = '0%';
+
+      stage.classList.add('brewing-active');
+      led1.classList.replace('bg-nexos-border', 'bg-nexos-copper');
+      statusPill.textContent = 'Moliendo y presurizando 9 BAR...';
+
+      const recipe = evaluateRecipe(selectedIngredients);
+      liquidFill.style.backgroundColor = recipe.color;
+
+      setTimeout(() => {
+        statusPill.textContent = 'Extrayendo en taza...';
+        led2.classList.replace('bg-nexos-border', 'bg-emerald-400');
+        liquidFill.style.height = recipe.fillHeight;
+      }, 900);
+
+      setTimeout(() => {
+        stage.classList.remove('brewing-active');
+        stage.classList.add('cup-ready');
+        statusPill.textContent = `¡Listo para ${clientName}!`;
+        led1.classList.replace('bg-nexos-copper', 'bg-nexos-border');
+        led2.classList.replace('bg-emerald-400', 'bg-nexos-border');
+
+        document.getElementById('result-drink-title').textContent = `${recipe.name} · Para ${clientName}`;
+        document.getElementById('result-drink-desc').textContent = recipe.desc;
+
+        lastCustomDrink = {
+          id: 'custom-' + Date.now(),
+          name: `${recipe.name} (Taza: ${clientName})`,
+          price: recipe.price
+        };
+
+        addCustomBtn.textContent = `+ Añadir "${recipe.name}" de ${clientName} al pedido ($${recipe.price.toFixed(2)})`;
+        addCustomBtn.classList.remove('hidden');
+
+        isBrewing = false;
+        showToast(`Bebida preparada para ${clientName}`);
+      }, 2600);
+    }
+
+    function resetBaristaLab() {
+      if (isBrewing) return;
+      selectedIngredients.clear();
+      document.querySelectorAll('.ingredient-btn').forEach(btn => {
+        btn.classList.remove('border-nexos-copper', 'bg-nexos-copper/10');
+        btn.classList.add('border-nexos-border', 'bg-nexos-bg');
+        const badge = btn.querySelector('.ing-status');
+        badge.textContent = '+ Añadir';
+        badge.classList.remove('bg-nexos-copper', 'text-nexos-bg');
+        badge.classList.add('bg-nexos-surface', 'text-nexos-muted');
+      });
+
+      document.getElementById('selected-count-label').textContent = '0 seleccionados';
+      document.getElementById('machine-stage').classList.remove('cup-ready', 'brewing-active');
+      document.getElementById('cup-liquid-fill').style.height = '0%';
+      document.getElementById('machine-status-pill').textContent = 'En espera de carga';
+      document.getElementById('result-drink-title').textContent = 'Listo para calibrar';
+      document.getElementById('result-drink-desc').textContent = 'Combina los ingredientes a la izquierda y presiona preparar.';
+      document.getElementById('add-custom-cup-btn').classList.add('hidden');
+      lastCustomDrink = null;
+    }
+
+    function addCustomDrinkToOrder() {
+      if (!lastCustomDrink) return;
+      addToCart(lastCustomDrink.id, lastCustomDrink.name, lastCustomDrink.price);
+    }
+
+    /* --------------------------------------------------------------------------
+       CATÁLOGO INTERACTIVO & CARRITO WHATSAPP
+       -------------------------------------------------------------------------- */
+    function renderCategoryTabs() {
+      const container = document.getElementById('category-tabs');
+      container.innerHTML = categories.map(cat => {
+        const isActive = cat === activeCategory;
+        return `
+          <button type="button" onclick="selectCategory('${cat.replace(/'/g, "\\'")}')" class="px-4 py-2 rounded-full text-xs font-mono uppercase tracking-wider border transition-all ${
+            isActive
+            ? 'bg-nexos-copper text-nexos-bg border-nexos-copper font-semibold'
+            : 'bg-nexos-surface text-nexos-muted border-nexos-border hover:text-nexos-text'
+          }">
+            ${cat}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectCategory(cat) {
+      activeCategory = cat;
+      renderCategoryTabs();
+      renderMenuGrid();
+    }
+
+    function resetMenuFilters() {
+      activeCategory = 'Todos';
+      searchQuery = '';
+      document.getElementById('menu-search').value = '';
+      renderCategoryTabs();
+      renderMenuGrid();
+    }
+
+    function formatPriceSummary(variants) {
+      const priced = variants.filter(v => typeof v.price === 'number');
+      if (priced.length === 0) return 'Consultar';
+      if (priced.length === 1) return `$${priced[0].price.toFixed(2)}`;
+      return priced.map(v => `$${v.price.toFixed(2)}`).join(' / ');
+    }
+
+    function renderMenuGrid() {
+      const grid = document.getElementById('menu-grid');
+      const emptyBox = document.getElementById('menu-empty');
+
+      const filtered = menuItems.filter(item => {
+        const matchesCat = activeCategory === 'Todos' || item.category === activeCategory;
+        const matchesQuery = item.name.toLowerCase().includes(searchQuery) ||
+                             item.desc.toLowerCase().includes(searchQuery) ||
+                             item.category.toLowerCase().includes(searchQuery);
+        return matchesCat && matchesQuery;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyBox.classList.remove('hidden');
+        return;
+      }
+
+      emptyBox.classList.add('hidden');
+      grid.innerHTML = filtered.map(item => {
+        const hasMultipleVariants = item.variants.length > 1;
+        const defaultVariant = item.variants[0];
+        const variantControls = hasMultipleVariants
+          ? `<select id="var-${item.id}" class="w-full mb-3 bg-nexos-bg border border-nexos-border focus:border-nexos-copper rounded-xl px-3 py-2 text-xs text-nexos-text outline-none">
+              ${item.variants.map((v, idx) => `
+                <option value="${idx}">${v.label}${typeof v.price === 'number' ? ` — $${v.price.toFixed(2)}` : ''}</option>
+              `).join('')}
+            </select>`
+          : `<div class="font-mono text-[11px] text-nexos-muted mb-3">${defaultVariant.label}</div>`;
+
+        return `
+          <article class="bg-nexos-surface hover:bg-nexos-surfaceHover border border-nexos-border rounded-2xl overflow-hidden flex flex-col justify-between transition-all group">
+            <div>
+              <div class="relative h-40 bg-nexos-bg overflow-hidden border-b border-nexos-border">
+                <img
+                  src="${item.image}"
+                  alt="${item.name}"
+                  loading="lazy"
+                  class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                />
+                <div class="hidden w-full h-full items-center justify-center bg-gradient-to-br from-[#231F1C] to-[#12100E] text-nexos-copper font-serif text-3xl">
+                  Nexos
+                </div>
+                <span class="absolute top-3 left-3 font-mono text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-md bg-nexos-bg/85 border border-nexos-border text-nexos-gold">
+                  ${item.category}
+                </span>
+              </div>
+
+              <div class="p-5">
+                <div class="flex items-start justify-between gap-3 mb-2">
+                  <h3 class="font-serif text-2xl text-nexos-text group-hover:text-nexos-gold transition-colors leading-snug">${item.name}</h3>
+                  <span class="font-mono text-sm font-semibold text-nexos-gold shrink-0 pt-1">${formatPriceSummary(item.variants)}</span>
+                </div>
+                <p class="text-xs text-nexos-muted leading-relaxed">${item.desc}</p>
+              </div>
+            </div>
+
+            <div class="px-5 pb-5 pt-2">
+              ${variantControls}
+              <button type="button" onclick="handleAddMenuItem('${item.id}')" class="w-full py-2.5 px-4 rounded-xl bg-nexos-bg hover:bg-nexos-copper text-nexos-text hover:text-nexos-bg border border-nexos-border hover:border-nexos-copper text-xs font-medium transition-all">
+                ${typeof defaultVariant.price === 'number' || hasMultipleVariants ? '+ Agregar' : '+ Consultar por WhatsApp'}
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function handleAddMenuItem(itemId) {
+      const item = menuItems.find(m => m.id === itemId);
+      if (!item) return;
+
+      const selectEl = document.getElementById(`var-${item.id}`);
+      const variantIndex = selectEl ? parseInt(selectEl.value, 10) : 0;
+      const chosen = item.variants[variantIndex] || item.variants[0];
+
+      const displayName = item.variants.length > 1
+        ? `${item.name} (${chosen.label})`
+        : item.name;
+
+      addToCart(`${item.id}-${variantIndex}`, displayName, chosen.price);
+    }
+
+    function addToCart(id, name, price) {
+      const numericPrice = typeof price === 'number' ? price : null;
+      const existing = cart.find(c => c.id === id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ id, name, price: numericPrice, qty: 1 });
+      }
+      renderCartUI();
+      showToast(`Añadido: ${name}`);
+    }
+
+    function updateCartQty(id, delta) {
+      const item = cart.find(c => c.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(c => c.id !== id);
+      }
+      renderCartUI();
+    }
+
+    function clearCart() {
+      cart = [];
+      renderCartUI();
+      showToast('Selección vaciada');
+    }
+
+    function setOrderMode(mode) {
+      orderMode = mode;
+      const btnLocal = document.getElementById('mode-local');
+      const btnLlevar = document.getElementById('mode-llevar');
+
+      if (mode === 'Consumo en el lugar') {
+        btnLocal.className = 'py-2 px-2.5 rounded-xl text-xs font-medium bg-nexos-copper text-nexos-bg transition-all';
+        btnLlevar.className = 'py-2 px-2.5 rounded-xl text-xs font-medium bg-nexos-bg border border-nexos-border text-nexos-muted hover:text-nexos-text transition-all';
+      } else {
+        btnLlevar.className = 'py-2 px-2.5 rounded-xl text-xs font-medium bg-nexos-copper text-nexos-bg transition-all';
+        btnLocal.className = 'py-2 px-2.5 rounded-xl text-xs font-medium bg-nexos-bg border border-nexos-border text-nexos-muted hover:text-nexos-text transition-all';
+      }
+    }
+
+    function renderCartUI() {
+      const listEl = document.getElementById('cart-items-list');
+      const headerBadge = document.getElementById('header-cart-count');
+      const sidebarBadge = document.getElementById('sidebar-badge');
+      const totalEl = document.getElementById('cart-total-amount');
+      const submitBtn = document.getElementById('whatsapp-submit-btn');
+      const clearBtn = document.getElementById('clear-cart-btn');
+
+      const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+      const totalPrice = cart.reduce((sum, i) => sum + (typeof i.price === 'number' ? i.price * i.qty : 0), 0);
+      const hasConsultItems = cart.some(i => typeof i.price !== 'number');
+
+      headerBadge.textContent = totalQty;
+      sidebarBadge.textContent = `${totalQty} ${totalQty === 1 ? 'ítem' : 'ítems'}`;
+      totalEl.textContent = hasConsultItems ? `$${totalPrice.toFixed(2)} + cons.` : `$${totalPrice.toFixed(2)}`;
+
+      if (cart.length === 0) {
+        submitBtn.disabled = true;
+        clearBtn.classList.add('hidden');
+        listEl.innerHTML = `<p class="text-xs text-nexos-muted py-6 text-center bg-nexos-bg/60 rounded-xl border border-nexos-border/60">Aún no has agregado productos del catálogo o del Laboratorio Barista.</p>`;
+        return;
+      }
+
+      submitBtn.disabled = false;
+      clearBtn.classList.remove('hidden');
+
+      listEl.innerHTML = cart.map(item => {
+        const lineText = typeof item.price === 'number'
+          ? `$${(item.price * item.qty).toFixed(2)}`
+          : 'Consultar precio';
+
+        return `
+          <div class="p-3 rounded-xl bg-nexos-bg border border-nexos-border flex items-center justify-between gap-2.5">
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-medium text-nexos-text truncate">${item.name}</div>
+              <div class="font-mono text-[11px] text-nexos-gold">${lineText}</div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button type="button" onclick="updateCartQty('${item.id}', -1)" class="w-6 h-6 rounded-md bg-nexos-surface border border-nexos-border text-nexos-text text-xs">−</button>
+              <span class="font-mono text-xs w-4 text-center">${item.qty}</span>
+              <button type="button" onclick="updateCartQty('${item.id}', 1)" class="w-6 h-6 rounded-md bg-nexos-surface border border-nexos-border text-nexos-text text-xs">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function sendWhatsAppOrder() {
+      if (cart.length === 0) return;
+
+      const paymentMethod = document.getElementById('order-payment-method').value;
+      const notes = document.getElementById('order-notes').value.trim();
+      let total = 0;
+      let hasConsultItems = false;
+
+      const itemsText = cart.map(item => {
+        if (typeof item.price === 'number') {
+          const sub = item.price * item.qty;
+          total += sub;
+          return `• ${item.qty}x ${item.name} — $${sub.toFixed(2)}`;
+        }
+        hasConsultItems = true;
+        return `• ${item.qty}x ${item.name} — Consultar precio`;
+      }).join('\n');
+
+      let msg = `Hola *Nexos Café* (Av. 5 entre calles 16 y 17, Mérida), quisiera realizar el siguiente pedido:\n\n`;
+      msg += `*Modalidad:* ${orderMode}\n`;
+      msg += `*Método de Pago:* ${paymentMethod}\n\n`;
+      msg += `*Detalle del Pedido:*\n${itemsText}\n\n`;
+      msg += `*Subtotal Estimado:* $${total.toFixed(2)}${hasConsultItems ? ' (más ítems por consultar)' : ''}`;
+
+      if (notes) {
+        msg += `\n*Notas:* ${notes}`;
+      }
+
+      window.open(`https://wa.me/584120744298?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
+    }
+
+    /* --------------------------------------------------------------------------
+       POLÍTICAS DE SEGURIDAD, PRIVACIDAD, COOKIES Y TÉRMINOS
+       -------------------------------------------------------------------------- */
+    const legalContent = {
+      seguridad: {
+        title: 'Políticas de Seguridad e Higiene',
+        html: `
+          <p><strong class="text-nexos-text">1. Seguridad Alimentaria y Control Sanitario:</strong> En <strong>Nexos Café</strong> (entre calles 16 y 17, Avenida 5, Mérida 5115), los procesos de preparación de café de especialidad, métodos filtrados, bebidas frías y calientes, postres y alternativas saladas siguen protocolos de higiene, sanitización y control de calidad.</p>
+          <p><strong class="text-nexos-text">2. Seguridad Física en Instalaciones:</strong> Nuestro espacio está dispuesto para atenderte desde las 8:30 a.m. tanto en consumo en el lugar como para llevar.</p>
+          <p><strong class="text-nexos-text">3. Seguridad en Transacciones Digitales:</strong> Este sitio web no solicita ni guarda contraseñas bancarias ni datos de tarjetas. Toda confirmación de pago por <strong>Zelle</strong> o <strong>Pago Móvil</strong> se coordina directamente mediante nuestro WhatsApp oficial (<strong>0412-0744298</strong>) o en barra.</p>
+          <p><strong class="text-nexos-text">4. Prevención contra Fraudes:</strong> Nunca pedimos claves ni códigos de verificación por mensaje. Verifica siempre el número oficial del establecimiento antes de transferir.</p>
+        `
+      },
+      privacidad: {
+        title: 'Política de Privacidad',
+        html: `
+          <p><strong class="text-nexos-text">1. Establecimiento:</strong> Nexos Café, entre calles 16 y 17, Avenida 5, Mérida 5115, Estado Mérida, Venezuela (@cafenexos).</p>
+          <p><strong class="text-nexos-text">2. Uso de Datos en el Sitio:</strong> El nombre ingresado en el <em>Laboratorio Barista</em> y los productos añadidos a <em>Tu Selección</em> se gestionan en tu navegador. Al enviar tu orden por WhatsApp, el mensaje se abre hacia el número oficial <strong>0412-0744298</strong> para atender tu solicitud.</p>
+          <p><strong class="text-nexos-text">3. Confidencialidad:</strong> No vendemos ni compartimos con terceros no autorizados los datos de contacto ni los pedidos de nuestros clientes.</p>
+        `
+      },
+      cookies: {
+        title: 'Política de Cookies',
+        html: `
+          <p><strong class="text-nexos-text">1. Cookies Técnicas Esenciales:</strong> Permiten recordar tu preferencia de cookies y el funcionamiento básico del catálogo interactivo y el <em>Laboratorio Barista</em> durante tu navegación.</p>
+          <p><strong class="text-nexos-text">2. Control de Preferencias:</strong> Puedes aceptar todas, usar solo las esenciales o reabrir este aviso en cualquier momento desde el pie de página.</p>
+          <p><strong class="text-nexos-text">3. Sin Rastreo Invasivo:</strong> No instalamos cookies publicitarias intrusivas desde este sitio.</p>
+        `
+      },
+      terminos: {
+        title: 'Términos y Condiciones de Servicio',
+        html: `
+          <p><strong class="text-nexos-text">1. Precios y Monedas de Pago:</strong> Los precios indicados en el catálogo están expresados en dólares estadounidenses (USD). Los pagos en <strong>Bolívares (Bs.) / Pago Móvil</strong> se calculan según la tasa vigente al momento de confirmar la orden, y también aceptamos <strong>Zelle</strong> y <strong>Dólar en Efectivo</strong>.</p>
+          <p><strong class="text-nexos-text">2. Ítems por Consultar y Disponibilidad:</strong> Los servicios filtrados, postres, salados, desayunos y presentaciones de café en grano/molido (250 g, 500 g y 1 Kg) están sujetos a disponibilidad diaria y confirmación en barra o por WhatsApp.</p>
+          <p><strong class="text-nexos-text">3. Promociones:</strong> El 10% de descuento en cafés en las mañanas y el descuento para cumpleañeros aplican según las condiciones vigentes de Nexos Café.</p>
+        `
+      }
+    };
+
+    function openLegalModal(key) {
+      const modal = document.getElementById('legal-modal');
+      const title = document.getElementById('legal-modal-title');
+      const body = document.getElementById('legal-modal-body');
+      const doc = legalContent[key] || legalContent.seguridad;
+
+      title.textContent = doc.title;
+      body.innerHTML = doc.html;
+
+      document.querySelectorAll('.legal-tab').forEach(tab => {
+        if (tab.dataset.doc === key) {
+          tab.classList.add('bg-nexos-copper', 'text-nexos-bg', 'border-nexos-copper', 'font-semibold');
+          tab.classList.remove('text-nexos-muted');
+        } else {
+          tab.classList.remove('bg-nexos-copper', 'text-nexos-bg', 'border-nexos-copper', 'font-semibold');
+          tab.classList.add('text-nexos-muted');
+        }
+      });
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeLegalModal() {
+      const modal = document.getElementById('legal-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function dismissCookieBanner(level) {
+      const banner = document.getElementById('cookie-banner');
+      banner.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      try {
+        localStorage.setItem('nexos_cookie_consent', level);
+      } catch (e) {}
+      showToast(level === 'todas' ? 'Cookies aceptadas' : 'Solo cookies esenciales activas');
+    }
+
+    function showCookieBanner() {
+      const banner = document.getElementById('cookie-banner');
+      banner.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+    }
+
+    function copyToClipboard(text, successMessage) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMessage);
+      } catch (e) {
+        showToast('No se pudo copiar');
+      }
+      document.body.removeChild(ta);
+    }
+
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-3');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-3');
+      }, 2600);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCategoryTabs();
+      renderMenuGrid();
+      renderCartUI();
+
+      document.getElementById('menu-search').addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim().toLowerCase();
+        renderMenuGrid();
+      });
+
+      try {
+        if (localStorage.getItem('nexos_cookie_consent')) {
+          document.getElementById('cookie-banner').classList.add('hidden');
+        }
+      } catch (e) {}
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    });
+  </script>
+</body>
+</html>

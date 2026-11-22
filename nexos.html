@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexos Café — Catálogo & Laboratorio Barista | Mérida</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Cormorant Garamond (Editorial) + Inter (UI) + JetBrains Mono (Especificaciones) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            nexos: {
+              bg: '#0E0D0C',
+              surface: '#171513',
+              surfaceHover: '#1F1C19',
+              border: '#2B2723',
+              text: '#F5F2EB',
+              muted: '#A69F95',
+              copper: '#D4784A',
+              copperHover: '#BE6437',
+              gold: '#E3B678',
+            }
+          },
+          fontFamily: {
+            serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       ESTILOS VISUALES & ANIMACIONES DE EXTRACCIÓN BARISTA
+       ========================================================================== */
+    body {
+      background-color: #0E0D0C;
+      color: #F5F2EB;
+      overflow-x: hidden;
+    }
+
+    .hero-glow {
+      background: radial-gradient(circle at 50% 20%, rgba(212, 120, 74, 0.16) 0%, rgba(227, 182, 120, 0.06) 38%, rgba(14, 13, 12, 0) 72%);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes brewStream {
+      0% { height: 0; opacity: 0.95; }
+      20% { height: 72px; opacity: 1; }
+      85% { height: 72px; opacity: 1; }
+      100% { height: 0; opacity: 0; transform: translateY(72px); }
+    }
+
+    @keyframes steamRise {
+      0% { transform: translateY(0) scale(0.9); opacity: 0; }
+      45% { opacity: 0.65; }
+      100% { transform: translateY(-28px) scale(1.25); opacity: 0; }
+    }
+
+    @keyframes gaugeNeedle {
+      0% { transform: rotate(-65deg); }
+      30% { transform: rotate(35deg); }
+      70% { transform: rotate(44deg); }
+      100% { transform: rotate(-65deg); }
+    }
+
+    @keyframes machineShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-1.5px); }
+      75% { transform: translateX(1.5px); }
+    }
+
+    .brewing-active .espresso-machine-box {
+      animation: machineShake 0.18s infinite;
+    }
+    .brewing-active .liquid-stream {
+      animation: brewStream 2.4s ease-in-out forwards;
+    }
+    .brewing-active .gauge-needle {
+      animation: gaugeNeedle 2.6s ease-in-out forwards;
+    }
+
+    .steam-wisp {
+      opacity: 0;
+    }
+    .cup-ready .steam-wisp {
+      animation: steamRise 2.4s ease-out infinite;
+    }
+    .cup-ready .steam-wisp:nth-child(2) {
+      animation-delay: 0.8s;
+    }
+    .cup-ready .steam-wisp:nth-child(3) {
+      animation-delay: 1.5s;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0E0D0C;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2B2723;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #D4784A;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-nexos-copper/30 selection:text-nexos-text">
+
+  <!-- Notificación Toast Flotante -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 translate-y-3">
+    <div class="bg-nexos-surface border border-nexos-copper/60 text-nexos-text px-5 py-2.5 rounded-full text-xs sm:text-sm shadow-2xl flex items-center gap-2.5">
+      <span class="w-2 h-2 rounded-full bg-nexos-copper animate-pulse"></span>
+      <span id="toast-msg">Acción completada</span>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       1. HEADER EDITORIAL FIJO
+       ========================================================================== -->
+  <header class="sticky top-0 z-40 bg-nexos-bg/90 backdrop-blur-md border-b border-nexos-border">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <a href="#" class="flex items-center gap-3 group shrink-0">
+        <div class="w-8 h-8 rounded-lg bg-nexos-surface border border-nexos-border flex items-center justify-center text-nexos-copper font-serif text-xl font-semibold group-hover:border-nexos-copper transition-colors">
+          N
+        </div>
+        <div class="flex items-baseline gap-2.5">
+          <span class="font-serif text-xl sm:text-2xl tracking-wider uppercase font-semibold text-nexos-text">Nexos Café</span>
+          <span class="hidden xl:inline-block font-mono text-[10px] uppercase tracking-widest px-2 py-0.5 rounded bg-nexos-surface border border-nexos-border text-nexos-gold">
+            Mérida · Av. 5
+          </span>
+        </div>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-6 text-xs uppercase tracking-widest text-nexos-muted">
+        <a href="#experiencia" class="hover:text-nexos-copper transition-colors">Experiencia</a>
+        <a href="#laboratorio" class="hover:text-nexos-copper transition-colors">Laboratorio Barista</a>
+        <a href="#catalogo" class="hover:text-nexos-copper transition-colors">Catálogo</a>
+        <a href="#promociones" class="hover:text-nexos-copper transition-colors">Promociones</a>
+        <a href="#pagos" class="hover:text-nexos-copper transition-colors">Métodos de Pago</a>
+        <button type="button" onclick="openLegalModal('seguridad')" class="hover:text-nexos-copper transition-colors uppercase tracking-widest">Legales</button>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-nexos-surface border border-nexos-border text-xs text-nexos-muted">
+          <span class="w-1.5 h-1.5 rounded-full bg-nexos-copper"></span>
+          <span>Abre 8:30 a.m.</span>
+        </div>
+
+        <a href="#catalogo" class="flex items-center gap-2 bg-nexos-surface hover:bg-nexos-surfaceHover border border-nexos-border hover:border-nexos-copper/60 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all">
+          <svg class="w-4 h-4 text-nexos-copper" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+          </svg>
+          <span>Tu Selección</span>
+          <span id="header-cart-count" class="bg-nexos-copper text-nexos-bg font-mono font-semibold px-1.5 py-0.2 rounded-full">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       2. HERO EDITORIAL & MÉTRICAS DE EXTRACCIÓN
+       ========================================================================== -->
+  <section id="experiencia" class="relative hero-glow border-b border-nexos-border">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-14 pb-20 sm:pt-20 sm:pb-24">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+
+        <div class="lg:col-span-7">
+          <div class="flex flex-wrap items-center gap-2.5 mb-6 font-mono text-xs">
+            <span class="px-3 py-1 rounded-full bg-nexos-surface border border-nexos-border text-nexos-gold">
+              ★ 4.8 <span class="text-nexos-muted">(64 opiniones)</span>
+            </span>
+            <span class="px-3 py-1 rounded-full bg-nexos-surface border border-nexos-border text-nexos-copper">
+              Rango $1 – $5
+            </span>
+            <span class="px-3 py-1 rounded-full bg-nexos-surface border border-nexos-border text-nexos-muted">
+              Consumo en el lugar · Para llevar
+            </span>
+          </div>
+
+          <h1 class="font-serif text-5xl sm:text-6xl lg:text-[4.8rem] leading-[0.98] tracking-tight font-medium text-nexos-text mb-6">
+            NEXOS <span class="italic font-normal text-nexos-copper">CAFÉ.</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-nexos-muted leading-relaxed max-w-xl mb-6 font-light">
+            Cafetería de especialidad, métodos filtrados, bebidas frías y calientes, postres y alternativas saladas en el corazón de Mérida. Diseña tu propia bebida en el <span class="text-nexos-text font-normal">Laboratorio Barista</span> o arma tu pedido para WhatsApp.
+          </p>
+
+          <div class="p-4 rounded-2xl bg-nexos-surface/80 border border-nexos-border mb-8 space-y-1.5 text-xs sm:text-sm">
+            <div class="flex flex-wrap items-center gap-2 text-nexos-text">
+              <span class="text-nexos-copper">📍</span>
+              <span>Entre calles 16 y 17, Avenida 5, Mérida 5115, Venezuela</span>
+              <button type="button" onclick="copyToClipboard('HVX6+V6 Mérida', 'Plus Code HVX6+V6 Mérida copiado')" class="font-mono text-[11px] px-2 py-0.5 rounded bg-nexos-bg border border-nexos-border text-nexos-gold hover:border-nexos-copper transition-colors">
+                HVX6+V6 Mérida
+              </button>
+            </div>
+            <div class="flex flex-wrap items-center gap-4 text-nexos-muted text-xs pt-1">
+              <span>🕒 Abre 8:30 a.m.</span>
+              <span>•</span>
+              <span>📞 0412-0744298</span>
+              <span>•</span>
+              <span>Instagram: @cafenexos</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3.5">
+            <a href="#laboratorio" class="px-6 py-3.5 rounded-xl bg-nexos-copper hover:bg-nexos-copperHover text-nexos-bg font-semibold text-sm tracking-wide transition-all shadow-lg shadow-nexos-copper/20 flex items-center gap-2">
+              <span>Laboratorio Barista</span>
+              <span>→</span>
+            </a>
+            <a href="#catalogo" class="px-6 py-3.5 rounded-xl bg-nexos-surface hover:bg-nexos-surfaceHover border border-nexos-border text-nexos-text font-medium text-sm tracking-wide transition-all">
+              Explorar Catálogo
+            </a>
+            <a href="https://wa.me/584120744298?text=Hola%20Nexos%20Caf%C3%A9%2C%20quisiera%20hacer%20una%20consulta." target="_blank" rel="noopener noreferrer" class="px-5 py-3.5 rounded-xl bg-transparent hover:bg-nexos-surface border border-nexos-border text-nexos-gold text-sm font-medium transition-all">
+              WhatsApp Directo
+            </a>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5">
+          <div class="relative rounded-3xl overflow-hidden border border-nexos-border bg-nexos-surface shadow-2xl aspect-[4/5] max-h-[480px] mx-auto">
+            <img
+              src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=900&q=80"
+              alt="Extracción artesanal de café en Nexos Café Mérida"
+              class="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-700"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="hidden w-full h-full flex-col items-center justify-center p-8 bg-gradient-to-br from-[#1F1C19] to-[#0E0D0C] text-center">
+              <div class="w-20 h-20 rounded-full border border-nexos-copper/50 flex items-center justify-center font-serif text-4xl text-nexos-copper mb-4">N</div>
+              <p class="font-serif text-2xl text-nexos-text">Nexos Café Mérida</p>
+              <p class="font-mono text-xs text-nexos-muted mt-1">93°C · 9 BAR · 28s</p>
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-nexos-bg via-transparent to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+              <div>
+                <span class="font-mono text-[10px] uppercase tracking-widest text-nexos-gold block">Tueste de Origen</span>
+                <span class="font-serif text-xl text-nexos-text">Extracción Calibrada</span>
+              </div>
+              <span class="font-mono text-xs px-2.5 py-1 rounded-lg bg-nexos-bg/85 border border-nexos-border text-nexos-copper">
+                Av. 5 · Mérida
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-12 mt-12 border-t border-nexos-border">
+        <div class="bg-nexos-surface/60 border border-nexos-border rounded-2xl p-5">
+          <span class="font-mono text-[11px] uppercase tracking-widest text-nexos-copper block mb-1">01 / Calibración</span>
+          <div class="font-serif text-3xl sm:text-4xl text-nexos-text">93°C</div>
+          <p class="text-xs text-nexos-muted mt-1">Temperatura térmica estable de infusión</p>
+        </div>
+        <div class="bg-nexos-surface/60 border border-nexos-border rounded-2xl p-5">
+          <span class="font-mono text-[11px] uppercase tracking-widest text-nexos-copper block mb-1">02 / Presión</span>
+          <div class="font-serif text-3xl sm:text-4xl text-nexos-text">9 BAR</div>
+          <p class="text-xs text-nexos-muted mt-1">Extracción constante de crema densa</p>
+        </div>
+        <div class="bg-nexos-surface/60 border border-nexos-border rounded-2xl p-5">
+          <span class="font-mono text-[11px] uppercase tracking-widest text-nexos-copper block mb-1">03 / Tiempo</span>
+          <div class="font-serif text-3xl sm:text-4xl text-nexos-text">28s</div>
+          <p class="text-xs text-nexos-muted mt-1">Curva dulce equilibrada en portafiltro</p>
+        </div>
+        <div class="bg-nexos-surface/60 border border-nexos-border rounded-2xl p-5">
+          <span class="font-mono text-[11px] uppercase tracking-widest text-nexos-copper block mb-1">04 / Rango</span>
+          <div class="font-serif text-3xl sm:text-4xl text-nexos-text">$1–$5</div>
+          <p class="text-xs text-nexos-muted mt-1">Consumo en el lugar o para llevar</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       3. LABORATORIO BARISTA — PREPARA TU TAZA NEXOS (JUEGO INTERACTIVO)
+       ========================================================================== -->
+  <section id="laboratorio" class="py-20 sm:py-24 border-b border-nexos-border bg-nexos-surface/25 reveal">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+        <div>
+          <span class="font-mono text-xs uppercase tracking-widest text-nexos-copper block mb-2">// 01. Experiencia Interactiva</span>
+          <h2 class="font-serif text-4xl sm:text-5xl text-nexos-text">Laboratorio Barista — Prepara tu Taza Nexos</h2>
+        </div>
+        <p class="text-sm text-nexos-muted max-w-md">
+          Escribe el nombre del cliente para grabarlo en la taza, elige los ingredientes y acciona la máquina de espresso para crear tu bebida.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+
+        <div class="lg:col-span-7 bg-nexos-surface border border-nexos-border rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-7">
+          <div>
+            <div class="flex items-center justify-between mb-2.5">
+              <label for="client-name-input" class="font-mono text-xs uppercase tracking-widest text-nexos-gold">
+                Paso 01 · Nombre del Cliente en Taza
+              </label>
+              <span class="font-mono text-[11px] text-nexos-muted">Vista previa en vivo</span>
+            </div>
+            <input
+              type="text"
+              id="client-name-input"
+              maxlength="22"
+              placeholder="Escribe tu nombre (ej. Camila, Alejandro...)"
+              class="w-full bg-nexos-bg border border-nexos-border focus:border-nexos-copper rounded-xl px-4 py-3.5 text-base text-nexos-text placeholder:text-nexos-muted/60 outline-none transition-colors"
+            />
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-mono text-xs uppercase tracking-widest text-nexos-gold">
+                Paso 02 · Combina los Ingredientes
+              </span>
+              <span id="selected-count-label" class="font-mono text-xs text-nexos-muted">0 seleccionados</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="ingredients-grid">
+              <button type="button" onclick="toggleIngredient('cafe')" id="ing-cafe" class="ingredient-btn text-left p-4 rounded-2xl bg-nexos-bg border border-nexos-border hover:border-nexos-copper/50 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexos-surface border border-nexos-border flex items-center justify-center text-nexos-copper font-serif text-lg">
+                    ●
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-nexos-text">Granos de Café</div>
+                    <div class="text-xs text-nexos-muted">Carga Espresso 18g</div>
+                  </div>
+                </div>
+                <span class="ing-status font-mono text-xs px-2.5 py-1 rounded-md bg-nexos-surface text-nexos-muted border border-nexos-border">+ Añadir</span>
+              </button>
+
+              <button type="button" onclick="toggleIngredient('agua')" id="ing-agua" class="ingredient-btn text-left p-4 rounded-2xl bg-nexos-bg border border-nexos-border hover:border-nexos-copper/50 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexos-surface border border-nexos-border flex items-center justify-center text-sky-400 font-serif text-lg">
+                    💧
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-nexos-text">Agua Purificada</div>
+                    <div class="text-xs text-nexos-muted">Infusión a 93°C</div>
+                  </div>
+                </div>
+                <span class="ing-status font-mono text-xs px-2.5 py-1 rounded-md bg-nexos-surface text-nexos-muted border border-nexos-border">+ Añadir</span>
+              </button>
+
+              <button type="button" onclick="toggleIngredient('leche')" id="ing-leche" class="ingredient-btn text-left p-4 rounded-2xl bg-nexos-bg border border-nexos-border hover:border-nexos-copper/50 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexos-surface border border-nexos-border flex items-center justify-center text-amber-100 font-serif text-lg">
+                    🥛
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-nexos-text">Leche Cremada</div>
+                    <div class="text-xs text-nexos-muted">Microespuma sedosa</div>
+                  </div>
+                </div>
+                <span class="ing-status font-mono text-xs px-2.5 py-1 rounded-md bg-nexos-surface text-nexos-muted border border-nexos-border">+ Añadir</span>
+              </button>
+
+              <button type="button" onclick="toggleIngredient('hielo')" id="ing-hielo" class="ingredient-btn text-left p-4 rounded-2xl bg-nexos-bg border border-nexos-border hover:border-nexos-copper/50 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexos-surface border border-nexos-border flex items-center justify-center text-cyan-200 font-serif text-lg">
+                    🧊
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-nexos-text">Cubos de Hielo</div>
+                    <div class="text-xs text-nexos-muted">Choque térmico frío</div>
+                  </div>
+                </div>
+                <span class="ing-status font-mono text-xs px-2.5 py-1 rounded-md bg-nexos-surface text-nexos-muted border border-nexos-border">+ Añadir</span>
+              </button>
+
+              <button type="button" onclick="toggleIngredient('cacao')" id="ing-cacao" class="ingredient-btn sm:col-span-2 text-left p-4 rounded-2xl bg-nexos-bg border border-nexos-border hover:border-nexos-copper/50 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-nexos-surface border border-nexos-border flex items-center justify-center text-nexos-gold font-serif text-lg">
+                    ✦
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium text-nexos-text">Cacao Merideño & Canela</div>
+                    <div class="text-xs text-nexos-muted">Toque aromático de autor</div>
+                  </div>
+                </div>
+                <span class="ing-status font-mono text-xs px-2.5 py-1 rounded-md bg-nexos-surface text-nexos-muted border border-nexos-border">+ Añadir</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-nexos-border flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              id="brew-btn"
+              onclick="startBrewing()"
+              class="flex-1 py-4 px-6 rounded-2xl bg-nexos-copper hover:bg-nexos-copperHover text-nexos-bg font-semibold text-sm tracking-wide transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-nexos-copper/20 cursor-pointer"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Preparar en Máquina</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="resetBaristaLab()"
+              class="py-4 px-5 rounded-2xl bg-nexos-bg hover:bg-nexos-surfaceHover border border-nexos-border text-nexos-muted hover:text-nexos-text text-sm font-medium transition-colors"
+            >
+              Reiniciar
+            </button>
+          </div>
+        </div>
+
+        <div id="machine-stage" class="lg:col-span-5 bg-nexos-bg border border-nexos-border rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-between relative overflow-hidden">
+          <div class="w-full flex items-center justify-between border-b border-nexos-border pb-4 mb-4">
+            <span class="font-mono text-[11px] uppercase tracking-widest text-nexos-muted">NEXOS-PRO M1</span>
+            <span id="machine-status-pill" class="font-mono text-xs px-3 py-1 rounded-full bg-nexos-surface border border-nexos-border text-nexos-gold">
+              En espera de carga
+            </span>
+          </div>
+
+          <div class="espresso-machine-box relative w-full max-w-[300px] my-2 flex flex-col items-center">
+            <div class="w-full h-24 bg-gradient-to-b from-[#262320] to-[#1A1816] border border-nexos-border rounded-t-3xl p-4 flex items-center justify-between shadow-xl relative">
+              <div class="w-12 h-12 rounded-full bg-nexos-bg border-2 border-nexos-gold/60 flex items-center justify-center relative shadow-inner">
+                <div class="gauge-needle w-0.5 h-4 bg-nexos-copper origin-bottom rounded-full" style="transform: rotate(-65deg);"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-nexos-text absolute"></div>
+              </div>
+
+              <div class="bg-nexos-bg border border-nexos-border px-3 py-1.5 rounded-lg text-center">
+                <div class="font-mono text-sm text-nexos-copper font-semibold">93.0°C</div>
+                <div class="font-mono text-[9px] text-nexos-muted uppercase">Caldera PID</div>
+              </div>
+
+              <div class="flex flex-col gap-1.5">
+                <span id="led-1" class="w-2.5 h-2.5 rounded-full bg-nexos-border transition-colors"></span>
+                <span id="led-2" class="w-2.5 h-2.5 rounded-full bg-nexos-border transition-colors"></span>
+              </div>
+            </div>
+
+            <div class="w-4/5 h-8 bg-[#141210] border-x border-nexos-border flex flex-col items-center justify-end relative">
+              <div class="w-24 h-5 bg-[#2E2A26] border border-nexos-border rounded-b-xl relative flex justify-center">
+                <div class="w-20 h-2.5 bg-nexos-copper rounded-r-full absolute -right-16 top-1 shadow-md"></div>
